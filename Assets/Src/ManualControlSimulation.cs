@@ -1,4 +1,5 @@
 ﻿using MehaMath.Math.Components;
+using Src.Helpers;
 using Src.Model;
 using Src.SpacecraftDynamics;
 using Src.SpacecraftDynamics.CentralBodyDynamics;
@@ -20,13 +21,16 @@ namespace Src
 		[SerializeField] private double rotationSpeedModule;
 		[Header("Visualisation parameters")]
 		[SerializeField] private TrajectoryRenderer trajectoryRenderer;
+		[SerializeField] private OrbitDrawer orbitDrawer;
 		[SerializeField] private Image fuelPercentage;
 		[SerializeField] private GameObject flame;
-
+		[Header("UI")] 
+		[SerializeField] private Button snapshotOrbit;
 		private SatelliteModel _model;
 		private ISpacecraftDynamics _spacecraftDynamics;
 		private double _initialFuelMass;
 		private Vector3 _shipRotation;
+		private JsonIO<Orbit> _orbitIo;
 
 		private void Start()
 		{
@@ -56,6 +60,33 @@ namespace Src
 
 			_shipRotation = simulationParameters.SpacecraftGo.transform.eulerAngles;
 			_initialFuelMass = simulationParameters.FuelMassKg;
+			_orbitIo = new JsonIO<Orbit>
+			{
+				FileName = "goalOrbit.json"
+			};
+			var startOrbit = OrbitHelper.GetOrbit(spacecraft.Velocity, spacecraft.Position,
+				simulationParameters.GravitationalParameter);
+			orbitDrawer.DrawOrbit(startOrbit, simulationParameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			{
+				Name = "Start Orbit",
+				LineColor = Color.red,
+				LineWidth = 0.01f
+			});
+			snapshotOrbit.onClick.AddListener(OnOrbitSnapshot);
+		}
+
+		private void OnOrbitSnapshot()
+		{
+			var spacecraft = _model.Spacecraft;
+			var orbit = OrbitHelper.GetOrbit(spacecraft.Velocity, spacecraft.Position,
+				simulationParameters.GravitationalParameter);
+			_orbitIo.Save(orbit);
+			orbitDrawer.DrawOrbit(orbit, simulationParameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			{
+				Name = "Goal orbit",
+				LineColor = Color.green,
+				LineWidth = 0.01f
+			});
 		}
 
 		private void Update()

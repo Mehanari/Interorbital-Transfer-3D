@@ -18,6 +18,8 @@ namespace Src
 		[SerializeField] private double timeStep;
 		[SerializeField] private float minTimeScale = 1;
 		[SerializeField] private float maxTimeScale = 100;
+		[Header("Orbits")] 
+		[SerializeField] private OrbitParametersEditor goalOrbit;
 		[Header("UI")] 
 		[SerializeField] private Slider timeScaleSlider;
 		[SerializeField] private Button playButton;
@@ -54,26 +56,41 @@ namespace Src
 				ExhaustVelocityConversionRate = 1000
 			};
 			_control = new PolynomialThrustControl
-			{
-				AlphaPolynomial = new Polynomial(0, 0.5, 0),
-				BetaPolynomial = new Polynomial(0, 0.5, 0),
-				GammaPolynomial = new Polynomial(0, 0, 0)
-			};
+			(
+				alphaPolynomial: new Polynomial(0, 0.5, 0),
+				betaPolynomial: new Polynomial(0, 0.5, 0),
+				gammaPolynomial: new Polynomial(0, 0, 0)
+			);
 			_dynamics = new Rkf45Dynamics()
 			{
 				GravitationalParameter = parameters.GravitationalParameter,
 				CentralBodyPosition = new Vector(parameters.EarthGo.transform.position * (float)parameters.KilometersPerUnit)
 			};
-			var orbit = OrbitHelper.GetOrbit(_initialState.Velocity, _initialState.Position,
-				parameters.GravitationalParameter);
-			orbitDrawer.DrawOrbit(orbit, parameters.EarthGo.transform.position, 100000, new OrbitLineParameters
-			{
-				Name = "Orbit Line",
-				LineColor = Color.blue,
-				LineWidth = 0.01f
-			});
+			DrawOrbits();
 			SetUpUI();
 			CalculateStates();
+		}
+
+		private void DrawOrbits()
+		{
+			//Drawing start orbit
+			var orbit = OrbitHelper.GetOrbit(_initialState.Velocity, _initialState.Position,
+				parameters.GravitationalParameter);
+			orbitDrawer.DrawOrbit(orbit, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			{
+				Name = "Start orbit",
+				LineColor = Color.red,
+				LineWidth = 0.01f
+			});
+			
+			//Drawing the goal orbit
+			var goal = goalOrbit.Orbit;
+			orbitDrawer.DrawOrbit(goal, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			{
+				Name = "Goal orbit",
+				LineColor = Color.green,
+				LineWidth = 0.01f
+			});
 		}
 
 		private void Update()

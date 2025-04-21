@@ -506,6 +506,13 @@ MonoBehaviour:
   timeStep: 0.1
   minTimeScale: 1
   maxTimeScale: 100
+  goalOrbit:
+    semiMajorAxis: 8419.338400188122
+    eccentricity: 0.1658485125364334
+    inclination: 1.5558479124942812
+    perigeeArgument: 0.31573258989909175
+    ascendingNodeLongitude: 6.26231958661135
+    trueAnomaly: 1.628905544660325
   timeScaleSlider: {fileID: 1739555306}
   playButton: {fileID: 1587813519}
   simulationStepSlider: {fileID: 1854395840}

@@ -11,15 +11,23 @@ namespace Src.Model
 	public class PolynomialThrustControl
 	{
 		//Alpha and beta parameters control the direction of spacecraft's thrust
-		public Polynomial AlphaPolynomial { get; set; }
-		public Polynomial BetaPolynomial { get; set; }
+		private readonly Polynomial _alphaPolynomial;
+
+		private readonly Polynomial _betaPolynomial;
 		//Gamma polynomial controls the fuel consumption rate.
-		public Polynomial GammaPolynomial { get; set; }
+		private readonly Polynomial _gammaPolynomial;
+
+		public PolynomialThrustControl(Polynomial alphaPolynomial, Polynomial betaPolynomial, Polynomial gammaPolynomial)
+		{
+			_alphaPolynomial = alphaPolynomial;
+			_betaPolynomial = betaPolynomial;
+			_gammaPolynomial = gammaPolynomial;
+		}
 
 		public Vector ThrustDirection(double time)
 		{
-			var alpha = AlphaPolynomial.Compute(time);
-			var beta = BetaPolynomial.Compute(time);
+			var alpha = _alphaPolynomial.Compute(time);
+			var beta = _betaPolynomial.Compute(time);
 			var cosAlpha = Math.Cos(alpha);
 			var cosBeta = Math.Cos(beta);
 			var sinBeta = Math.Sin(beta);
@@ -30,7 +38,7 @@ namespace Src.Model
 		//Returns how many percent of the spacecraft's maximum fuel consumption rate to use at a given moment in time.
 		public double FuelConsumptionRatePercent(double time)
 		{
-			var gamma = GammaPolynomial.Compute(time);
+			var gamma = _gammaPolynomial.Compute(time);
 			var percent = 1 + Math.Sin(gamma);
 			return percent;
 		}

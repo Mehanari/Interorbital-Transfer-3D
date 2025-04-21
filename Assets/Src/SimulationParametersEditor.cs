@@ -9,8 +9,6 @@ namespace Src
 		[Header("Simulation parameters")]
 		[Tooltip("This value is used to convert objects simulation positions to Unity's scene positions and vice versa.")]
 		[SerializeField] private double kilometersPerUnit = 100;
-		[Tooltip("How to convert Unity's time into simulation time. Use it to speed up the simulation")]
-		[SerializeField] private float timeStepMultiplier;
 		[SerializeField] private GameObject earthGo;
 		[Tooltip("Measured in km^3/s^2")]
 		[SerializeField] private double gravitationalParameter;
@@ -26,7 +24,6 @@ namespace Src
 		[SerializeField] private double fuelConsumptionRateKgS;
 
 		public double KilometersPerUnit => kilometersPerUnit;
-		public float TimeStepMultiplier => timeStepMultiplier;
 		public GameObject EarthGo => earthGo;
 		public double GravitationalParameter => gravitationalParameter;
 		public GameObject SpacecraftGo => spacecraftGo;

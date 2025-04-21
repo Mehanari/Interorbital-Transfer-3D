@@ -11,6 +11,8 @@ namespace Src
 	public class ManualControlSimulation : MonoBehaviour
 	{
 		[SerializeField] private SimulationParametersEditor simulationParameters;
+		[Tooltip("How to convert Unity's time into simulation time. Use it to speed up the simulation")]
+		[SerializeField] private float timeStepMultiplier;
 		[SerializeField] private GameObject spacecraftNose;
 		[Header("Control parameters")] 
 		[SerializeField] private double maxFuelConsumptionKgS;
@@ -62,7 +64,7 @@ namespace Src
 			HandleFuelConsumptionRateInputs();
 			UpdateExhaustDirection();
 			
-			var newState = _spacecraftDynamics.PropagateState(_model.Spacecraft, Time.deltaTime*simulationParameters.TimeStepMultiplier);
+			var newState = _spacecraftDynamics.PropagateState(_model.Spacecraft, Time.deltaTime*timeStepMultiplier);
 			_model.Spacecraft = newState;
 			simulationParameters.SpacecraftGo.transform.position = (newState.Position/simulationParameters.KilometersPerUnit).ToVector3();
 			

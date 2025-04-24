@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Src.ControlGeneration
+namespace Src.ControlGeneration.GeneticAlgorithms
 {
 	/// <summary>
 	/// The purpose of this class is to select a pool of specimen from a given specimen array.

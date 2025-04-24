@@ -1,5 +1,6 @@
 using System;
 using MehaMath.Math.Components;
+using Newtonsoft.Json;
 
 namespace Src.Model
 {
@@ -7,19 +8,26 @@ namespace Src.Model
 	public struct Spacecraft
 	{
 		private Vector _exhaustDirection;
+		[JsonProperty("mass")]
 		public double Mass { get; set; }
+		[JsonProperty("fuelMass")]
 		public double FuelMass { get; set; }
 		/// <summary>
 		/// This variable controls the magnitude of the engine acceleration.
 		/// </summary>
+		[JsonProperty("fuelConsumptionRate")]
 		public double FuelConsumptionRate { get; set; }
+		[JsonIgnore]
 		public double TotalMass => Mass + FuelMass;
+		[JsonProperty("position")]
 		public Vector Position { get; set; }
+		[JsonProperty("velocity")]
 		public Vector Velocity { get; set; }
 		/// <summary>
 		/// Note: this value is constant for most rocket engines.
 		/// You don't have to keep it constant thought, but doing it would make simulation more realistic.
 		/// </summary>
+		[JsonProperty("exhaustVelocityModule")]
 		public double ExhaustVelocityModule { get; set; }
 
 		/// <summary>
@@ -29,11 +37,15 @@ namespace Src.Model
 		/// This parameter is here for that.
 		/// It answers the question "How many times spacecraft's velocity units are bigger than it's engine exhaust velocity units?"
 		/// </summary>
+		[JsonProperty("exhaustVelocityConversionRate")]
 		public double ExhaustVelocityConversionRate { get; set; }
+		[JsonProperty("maxFuelConsumptionRate")]
+		public double MaxFuelConsumptionRate { get; set; }
 
 		/// <summary>
 		/// One of the main spacecraft control variables which determines in which direction the spaceship will accelerate.
 		/// </summary>
+		[JsonProperty("exhaustDirection")]
 		public Vector ExhaustDirection
 		{
 			get => _exhaustDirection;
@@ -90,7 +102,8 @@ namespace Src.Model
 				Position = this.Position,
 				Velocity = this.Velocity,
 				Mass = this.Mass,
-				ExhaustVelocityConversionRate = this.ExhaustVelocityConversionRate
+				ExhaustVelocityConversionRate = this.ExhaustVelocityConversionRate,
+				MaxFuelConsumptionRate = this.MaxFuelConsumptionRate
 			};
 		}
 	}

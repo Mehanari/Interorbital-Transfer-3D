@@ -1,4 +1,5 @@
 ﻿using MehaMath.Math.Components;
+using Src.EditorTools;
 using Src.Helpers;
 using Src.Model;
 using Src.SpacecraftDynamics;
@@ -11,7 +12,7 @@ namespace Src
 {
 	public class ManualControlSimulation : MonoBehaviour
 	{
-		[SerializeField] private SimulationParametersEditor simulationParameters;
+		[SerializeField] private SingleSpacecraftSimulationParameters singleSpacecraftSimulation;
 		[Tooltip("How to convert Unity's time into simulation time. Use it to speed up the simulation")]
 		[SerializeField] private float timeStepMultiplier;
 		[SerializeField] private GameObject spacecraftNose;
@@ -36,37 +37,37 @@ namespace Src
 		{
 			var spacecraft = new Spacecraft()
 			{
-				Velocity = new Vector(simulationParameters.SpacecraftInitialVelocityKmS),
-				Position = new Vector(simulationParameters.SpacecraftGo.transform.position*(float)simulationParameters.KilometersPerUnit),
-				FuelMass = simulationParameters.FuelMassKg,
-				FuelConsumptionRate = simulationParameters.FuelConsumptionRateKgS,
-				Mass = simulationParameters.SpacecraftMassKg,
-				ExhaustDirection = new Vector(simulationParameters.ExhaustDirection),
-				ExhaustVelocityModule = simulationParameters.ExhaustVelocityModuleMs,
+				Velocity = new Vector(singleSpacecraftSimulation.SpacecraftInitialVelocityKmS),
+				Position = new Vector(singleSpacecraftSimulation.SpacecraftGo.transform.position*(float)singleSpacecraftSimulation.KilometersPerUnit),
+				FuelMass = singleSpacecraftSimulation.FuelMassKg,
+				FuelConsumptionRate = singleSpacecraftSimulation.FuelConsumptionRateKgS,
+				Mass = singleSpacecraftSimulation.SpacecraftMassKg,
+				ExhaustDirection = new Vector(singleSpacecraftSimulation.ExhaustDirection),
+				ExhaustVelocityModule = singleSpacecraftSimulation.ExhaustVelocityModuleMs,
 				ExhaustVelocityConversionRate = 1000
 			};
 			_model = new SatelliteModel
 			{
 				Spacecraft = spacecraft,
-				EarthPosition = new Vector(simulationParameters.EarthGo.transform.position*(float)simulationParameters.KilometersPerUnit),
-				GravitationalParameter = simulationParameters.GravitationalParameter
+				EarthPosition = new Vector(singleSpacecraftSimulation.EarthGo.transform.position*(float)singleSpacecraftSimulation.KilometersPerUnit),
+				GravitationalParameter = singleSpacecraftSimulation.GravitationalParameter
 			};
 			_spacecraftDynamics = new Rkf45Dynamics()
 			{
-				GravitationalParameter = simulationParameters.GravitationalParameter,
-				CentralBodyPosition = new Vector(simulationParameters.EarthGo.transform.position * (float)simulationParameters.KilometersPerUnit)
+				GravitationalParameter = singleSpacecraftSimulation.GravitationalParameter,
+				CentralBodyPosition = new Vector(singleSpacecraftSimulation.EarthGo.transform.position * (float)singleSpacecraftSimulation.KilometersPerUnit)
 			};
 			trajectoryRenderer.SetModel(_model);
 
-			_shipRotation = simulationParameters.SpacecraftGo.transform.eulerAngles;
-			_initialFuelMass = simulationParameters.FuelMassKg;
+			_shipRotation = singleSpacecraftSimulation.SpacecraftGo.transform.eulerAngles;
+			_initialFuelMass = singleSpacecraftSimulation.FuelMassKg;
 			_orbitIo = new JsonIO<Orbit>
 			{
 				FileName = "goalOrbit.json"
 			};
 			var startOrbit = OrbitHelper.GetOrbit(spacecraft.Velocity, spacecraft.Position,
-				simulationParameters.GravitationalParameter);
-			orbitDrawer.DrawOrbit(startOrbit, simulationParameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+				singleSpacecraftSimulation.GravitationalParameter);
+			orbitDrawer.DrawOrbit(startOrbit, singleSpacecraftSimulation.EarthGo.transform.position, 1000, new OrbitLineParameters
 			{
 				Name = "Start Orbit",
 				LineColor = Color.red,
@@ -79,9 +80,9 @@ namespace Src
 		{
 			var spacecraft = _model.Spacecraft;
 			var orbit = OrbitHelper.GetOrbit(spacecraft.Velocity, spacecraft.Position,
-				simulationParameters.GravitationalParameter);
+				singleSpacecraftSimulation.GravitationalParameter);
 			_orbitIo.Save(orbit);
-			orbitDrawer.DrawOrbit(orbit, simulationParameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			orbitDrawer.DrawOrbit(orbit, singleSpacecraftSimulation.EarthGo.transform.position, 1000, new OrbitLineParameters
 			{
 				Name = "Goal orbit",
 				LineColor = Color.green,
@@ -97,7 +98,7 @@ namespace Src
 			
 			var newState = _spacecraftDynamics.PropagateState(_model.Spacecraft, Time.deltaTime*timeStepMultiplier);
 			_model.Spacecraft = newState;
-			simulationParameters.SpacecraftGo.transform.position = (newState.Position/simulationParameters.KilometersPerUnit).ToVector3();
+			singleSpacecraftSimulation.SpacecraftGo.transform.position = (newState.Position/singleSpacecraftSimulation.KilometersPerUnit).ToVector3();
 			
 			UpdateSpacecraftModelDirection(newState);
 			UpdateVisualEffects();
@@ -129,35 +130,35 @@ namespace Src
 		private void HandleRotationInputs()
 		{
 			float rotationSpeed = (float)rotationSpeedModule * Time.deltaTime;
-			var currentRotation = simulationParameters.SpacecraftGo.transform.eulerAngles;
-			simulationParameters.SpacecraftGo.transform.eulerAngles = _shipRotation;
+			var currentRotation = singleSpacecraftSimulation.SpacecraftGo.transform.eulerAngles;
+			singleSpacecraftSimulation.SpacecraftGo.transform.eulerAngles = _shipRotation;
 			if (Input.GetKey(KeyCode.Q))
 			{
-				simulationParameters.SpacecraftGo.transform.Rotate(Vector3.forward, rotationSpeed, Space.Self); // Roll left
+				singleSpacecraftSimulation.SpacecraftGo.transform.Rotate(Vector3.forward, rotationSpeed, Space.Self); // Roll left
 			}
 			if (Input.GetKey(KeyCode.E))
 			{
-				simulationParameters.SpacecraftGo.transform.Rotate(Vector3.forward, -rotationSpeed, Space.Self); // Roll right
+				singleSpacecraftSimulation.SpacecraftGo.transform.Rotate(Vector3.forward, -rotationSpeed, Space.Self); // Roll right
 			}
 			if (Input.GetKey(KeyCode.W))
 			{
-				simulationParameters.SpacecraftGo.transform.Rotate(Vector3.right, rotationSpeed, Space.Self); // Pitch forward
+				singleSpacecraftSimulation.SpacecraftGo.transform.Rotate(Vector3.right, rotationSpeed, Space.Self); // Pitch forward
 			}
 			if (Input.GetKey(KeyCode.S))
 			{
-				simulationParameters.SpacecraftGo.transform.Rotate(Vector3.right, -rotationSpeed, Space.Self); // Pitch backward
+				singleSpacecraftSimulation.SpacecraftGo.transform.Rotate(Vector3.right, -rotationSpeed, Space.Self); // Pitch backward
 			}
 			if (Input.GetKey(KeyCode.A))
 			{
-				simulationParameters.SpacecraftGo.transform.Rotate(Vector3.up, -rotationSpeed, Space.Self); // Yaw left
+				singleSpacecraftSimulation.SpacecraftGo.transform.Rotate(Vector3.up, -rotationSpeed, Space.Self); // Yaw left
 			}
 			if (Input.GetKey(KeyCode.D))
 			{
-				simulationParameters.SpacecraftGo.transform.Rotate(Vector3.up, rotationSpeed, Space.Self); // Yaw right
+				singleSpacecraftSimulation.SpacecraftGo.transform.Rotate(Vector3.up, rotationSpeed, Space.Self); // Yaw right
 			}
 
-			_shipRotation = simulationParameters.SpacecraftGo.transform.eulerAngles;
-			simulationParameters.SpacecraftGo.transform.eulerAngles = currentRotation;
+			_shipRotation = singleSpacecraftSimulation.SpacecraftGo.transform.eulerAngles;
+			singleSpacecraftSimulation.SpacecraftGo.transform.eulerAngles = currentRotation;
 		}
 
 		private void HandleFuelConsumptionRateInputs()
@@ -180,7 +181,7 @@ namespace Src
 		{
 			// Update exhaust direction based on spacecraftGo to spacecraftNose vector
 			var spacecraft= _model.Spacecraft;
-			Vector3 noseDirection = (spacecraftNose.transform.position - simulationParameters.SpacecraftGo.transform.position).normalized;
+			Vector3 noseDirection = (spacecraftNose.transform.position - singleSpacecraftSimulation.SpacecraftGo.transform.position).normalized;
 			spacecraft.ExhaustDirection = new Vector(-noseDirection.x, -noseDirection.y, -noseDirection.z).Normalized();
 			_model.Spacecraft = spacecraft;
 		}
@@ -193,21 +194,21 @@ namespace Src
 			var axis = Vector3.Cross(Vector3.forward, newVelocity).normalized;
 			var rotation = Quaternion.AngleAxis(angle, axis);
 			var euler = rotation.eulerAngles;
-			simulationParameters.SpacecraftGo.transform.eulerAngles = euler + _shipRotation;
+			singleSpacecraftSimulation.SpacecraftGo.transform.eulerAngles = euler + _shipRotation;
 		}
 
 		private void OnDrawGizmos()
 		{
-			if (simulationParameters.SpacecraftGo is null)
+			if (singleSpacecraftSimulation.SpacecraftGo is null)
 			{
 				return;
 			}
 
-			var spacecraftPosition = simulationParameters.SpacecraftGo.transform.position;
+			var spacecraftPosition = singleSpacecraftSimulation.SpacecraftGo.transform.position;
 			Gizmos.color = Color.blue;
-			Gizmos.DrawLine(spacecraftPosition, spacecraftPosition + simulationParameters.SpacecraftInitialVelocityKmS);
+			Gizmos.DrawLine(spacecraftPosition, spacecraftPosition + singleSpacecraftSimulation.SpacecraftInitialVelocityKmS);
 			Gizmos.color =Color.red;
-			Gizmos.DrawLine(spacecraftPosition, spacecraftPosition + simulationParameters.ExhaustDirection);
+			Gizmos.DrawLine(spacecraftPosition, spacecraftPosition + singleSpacecraftSimulation.ExhaustDirection);
 		}
 	}
 }

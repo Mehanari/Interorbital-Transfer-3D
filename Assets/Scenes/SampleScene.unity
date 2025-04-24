@@ -1447,6 +1447,7 @@ MonoBehaviour:
     exhaustDirection: {x: 0, y: 0, z: -1}
     exhaustVelocityModuleMs: 1000
     fuelConsumptionRateKgS: 0
+    maxFuelConsumptionRateKgS: 1
   timeStepMultiplier: 10
   spacecraftNose: {fileID: 1325940320}
   maxFuelConsumptionKgS: 1

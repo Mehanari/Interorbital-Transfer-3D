@@ -455,8 +455,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 186833042}
-  - component: {fileID: 186833043}
   - component: {fileID: 186833044}
+  - component: {fileID: 186833045}
   m_Layer: 0
   m_Name: BakedSimulation
   m_TagString: Untagged
@@ -479,45 +479,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &186833043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 186833041}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 973b2945f9424db1b29748af3a1f0b3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parameters:
-    kilometersPerUnit: 1000
-    earthGo: {fileID: 1253148248}
-    gravitationalParameter: 398600.4375
-    spacecraftGo: {fileID: 1080267309}
-    spacecraftInitialVelocityKmS: {x: 0, y: 0, z: 8}
-    spacecraftMassKg: 300
-    fuelMassKg: 200
-    exhaustDirection: {x: 0, y: 0, z: -1}
-    exhaustVelocityModuleMs: 1000
-    fuelConsumptionRateKgS: 0
-    maxFuelConsumptionRateKgS: 1
-  samplesCount: 100000
-  timeStep: 0.1
-  minTimeScale: 1
-  maxTimeScale: 100
-  goalOrbit:
-    semiMajorAxis: 8419.338400188122
-    eccentricity: 0.1658485125364334
-    inclination: 1.5558479124942812
-    perigeeArgument: 0.31573258989909175
-    ascendingNodeLongitude: 6.26231958661135
-    trueAnomaly: 1.628905544660325
-  timeScaleSlider: {fileID: 1739555306}
-  playButton: {fileID: 1587813519}
-  simulationStepSlider: {fileID: 1854395840}
-  orbitDrawer: {fileID: 186833044}
 --- !u!114 &186833044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,6 +492,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kilometersPerUnit: 1000
+--- !u!114 &186833045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186833041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c45d0c0868842d08e2618b8ed38f5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parameters:
+    kilometersPerUnit: 1000
+    earthGo: {fileID: 1253148248}
+    gravitationalParameter: 398600.4375
+    spacecrafts:
+    - {fileID: 1080267312}
+    - {fileID: 396320388}
+    - {fileID: 2019810917}
+    - {fileID: 2105980979}
+  samplesCount: 10000
+  timeStep: 0.1
+  minTimeScale: 1
+  maxTimeScale: 100
+  timeScaleSlider: {fileID: 1739555306}
+  playButton: {fileID: 1587813519}
+  simulationStepSlider: {fileID: 1854395840}
+  orbitDrawer: {fileID: 186833044}
 --- !u!1 &192127044
 GameObject:
   m_ObjectHideFlags: 0
@@ -818,6 +808,125 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1001 &396320386
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_Name
+      value: SatelliteMid
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.575
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 396320388}
+  m_SourcePrefab: {fileID: -5645937942226959685, guid: c12257cc29632e14e88f1706ac80601b,
+    type: 3}
+--- !u!1 &396320387 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+    type: 3}
+  m_PrefabInstance: {fileID: 396320386}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &396320388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396320387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a63199a880e249b7955a218b3e9bf043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spacecraftGo: {fileID: 396320387}
+  spacecraftInitialVelocityKmS: {x: 0, y: -0.15, z: 7.3}
+  spacecraftMassKg: 200
+  fuelMassKg: 0
+  exhaustDirection: {x: 0, y: 0, z: -1}
+  exhaustVelocityModuleMs: 0
+  fuelConsumptionRateKgS: 0
+  maxFuelConsumptionRateKgS: 1
 --- !u!1 &400597179
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,7 +1614,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 10838576}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 111078, guid: b271505711828fd4e9719f1b97a0922a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1080267312}
   m_SourcePrefab: {fileID: 100100000, guid: b271505711828fd4e9719f1b97a0922a, type: 3}
 --- !u!4 &1080267308 stripped
 Transform:
@@ -1519,6 +1632,26 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1080267307}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1080267312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080267309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a63199a880e249b7955a218b3e9bf043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spacecraftGo: {fileID: 1080267309}
+  spacecraftInitialVelocityKmS: {x: 0, y: 0, z: 7.66}
+  spacecraftMassKg: 300
+  fuelMassKg: 100
+  exhaustDirection: {x: 0, y: 0, z: -1}
+  exhaustVelocityModuleMs: 200
+  fuelConsumptionRateKgS: 0
+  maxFuelConsumptionRateKgS: 10
 --- !u!1 &1242027645
 GameObject:
   m_ObjectHideFlags: 0
@@ -2642,6 +2775,244 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2008165875}
   m_CullTransparentMesh: 1
+--- !u!1001 &2019810915
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_Name
+      value: SatelliteFar
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8539169
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.4710595
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.10684465
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.19368331
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -57.766
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 25.559
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2019810917}
+  m_SourcePrefab: {fileID: -5645937942226959685, guid: c12257cc29632e14e88f1706ac80601b,
+    type: 3}
+--- !u!1 &2019810916 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+    type: 3}
+  m_PrefabInstance: {fileID: 2019810915}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2019810917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019810916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a63199a880e249b7955a218b3e9bf043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spacecraftGo: {fileID: 2019810916}
+  spacecraftInitialVelocityKmS: {x: 0, y: 0.5, z: 6.9}
+  spacecraftMassKg: 100
+  fuelMassKg: 0
+  exhaustDirection: {x: 0, y: 0, z: -1}
+  exhaustVelocityModuleMs: 0
+  fuelConsumptionRateKgS: 0
+  maxFuelConsumptionRateKgS: 1
+--- !u!1001 &2105980977
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_Name
+      value: SatelliteClose
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8539169
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.4710595
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.10684465
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.19368331
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -57.766
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 25.559
+      objectReference: {fileID: 0}
+    - target: {fileID: 8897093224900880590, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2105980979}
+  m_SourcePrefab: {fileID: -5645937942226959685, guid: c12257cc29632e14e88f1706ac80601b,
+    type: 3}
+--- !u!1 &2105980978 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8128668236925612103, guid: c12257cc29632e14e88f1706ac80601b,
+    type: 3}
+  m_PrefabInstance: {fileID: 2105980977}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2105980979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105980978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a63199a880e249b7955a218b3e9bf043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spacecraftGo: {fileID: 2105980978}
+  spacecraftInitialVelocityKmS: {x: 0, y: 0.01, z: -7.64}
+  spacecraftMassKg: 100
+  fuelMassKg: 0
+  exhaustDirection: {x: 0, y: 0, z: -1}
+  exhaustVelocityModuleMs: 0
+  fuelConsumptionRateKgS: 0
+  maxFuelConsumptionRateKgS: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2653,3 +3024,6 @@ SceneRoots:
   - {fileID: 822883681}
   - {fileID: 400597182}
   - {fileID: 186833042}
+  - {fileID: 396320386}
+  - {fileID: 2019810915}
+  - {fileID: 2105980977}

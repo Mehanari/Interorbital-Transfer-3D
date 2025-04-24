@@ -3,7 +3,6 @@ using MehaMath.Math.Components;
 using Src.Helpers;
 using Src.Model;
 using Src.SpacecraftDynamics;
-using Unity.Mathematics;
 
 namespace Src.ControlGeneration
 {
@@ -15,21 +14,19 @@ namespace Src.ControlGeneration
 	{
 		private readonly Spacecraft _initialState;
 		private readonly Orbit _goalOrbit;
-		private readonly double _maxFuelConsumptionRate;
 		private readonly double _gravitationalParameter;
 		private readonly double _timeStep;
 		private readonly ISpacecraftDynamics _dynamics;
 		private readonly OrbitWeightedCoefficients _coefficients;
 
 		public ControlPrecisionEvaluator(Spacecraft initialState, Orbit goalOrbit, ISpacecraftDynamics dynamics, 
-			double gravitationalParameter, double timeStep, double maxFuelConsumptionRate, OrbitWeightedCoefficients coefficients)
+			double gravitationalParameter, double timeStep, OrbitWeightedCoefficients coefficients)
 		{
 			_initialState = initialState;
 			_goalOrbit = goalOrbit;
 			_dynamics = dynamics;
 			_gravitationalParameter = gravitationalParameter;
 			_timeStep = timeStep;
-			_maxFuelConsumptionRate = maxFuelConsumptionRate;
 			_coefficients = coefficients;
 		}
 
@@ -58,7 +55,7 @@ namespace Src.ControlGeneration
 			{
 				currentState.ExhaustDirection = controller.ThrustDirection(elapsedTime) * -1;
 				currentState.FuelConsumptionRate =
-					controller.FuelConsumptionRatePercent(elapsedTime) * _maxFuelConsumptionRate;
+					controller.FuelConsumptionRatePercent(elapsedTime) * currentState.MaxFuelConsumptionRate;
 				var nextState = _dynamics.PropagateState(currentState, _timeStep);
 
 				currentState = nextState;

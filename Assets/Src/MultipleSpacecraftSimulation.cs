@@ -11,18 +11,25 @@ using Src.Visualisation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ColorUtility = Src.Helpers.ColorUtility;
 
 namespace Src
 {
-	public class BakedSimulation : MonoBehaviour
+	public class MultipleSpacecraftSimulation : MonoBehaviour
 	{
-		[SerializeField] private SingleSpacecraftSimulationParameters parameters;
+		private class SpacecraftData
+		{
+			public Vector3 LocalRotation { get; set; }
+			public Spacecraft InitialState { get; set; }
+			public Spacecraft[] States { get; set; }
+			public GameObject Go { get; set; }
+		}
+		
+		[SerializeField] private MultiSpacecraftsSimulationParameters parameters;
 		[SerializeField] private int samplesCount;
 		[SerializeField] private double timeStep;
 		[SerializeField] private float minTimeScale = 1;
 		[SerializeField] private float maxTimeScale = 100;
-		[Header("Orbits")] 
-		[SerializeField] private OrbitParametersEditor goalOrbit;
 		[Header("UI")] 
 		[SerializeField] private Slider timeScaleSlider;
 		[SerializeField] private Button playButton;
@@ -31,60 +38,56 @@ namespace Src
 		[Header("Visual features")] 
 		[SerializeField] private OrbitDrawer orbitDrawer;
 		
-		private Vector3 _shipLocalRotation;
 		private bool _isPlaying = false;
 		private float _elapsedTime;
 		private float _currentTimeScale;
-		private PolynomialThrustControl _control;
 		private ISpacecraftDynamics _dynamics;
-		private Spacecraft _initialState;
-		private Spacecraft[] _states;
+
+		private SpacecraftData[] _spacecrafts;
 
 		private float TotalTime => samplesCount * (float)timeStep;
 
 		private void Start()
 		{
-			_shipLocalRotation = parameters.SpacecraftGo.transform.eulerAngles;
 			_currentTimeScale = minTimeScale;
-			_states = new Spacecraft[samplesCount];
-			_initialState = parameters.Spacecraft;
-			
-			_control = new PolynomialThrustControl
-			(
-				alphaPolynomial: new Polynomial(0, 0.5, 0),
-				betaPolynomial: new Polynomial(0, 0.5, 0),
-				gammaPolynomial: new Polynomial(0, 0, 0)
-			);
 			_dynamics = new Rkf45Dynamics()
 			{
 				GravitationalParameter = parameters.GravitationalParameter,
 				CentralBodyPosition = new Vector(parameters.EarthGo.transform.position * (float)parameters.KilometersPerUnit)
 			};
-			DrawOrbits();
+
+			_spacecrafts = new SpacecraftData[parameters.SpacecraftsParameters.Count];
+			for (int i = 0; i < parameters.SpacecraftsParameters.Count; i++)
+			{
+				var spacecraftParameters = parameters.SpacecraftsParameters[i];
+				_spacecrafts[i] = new SpacecraftData
+				{
+					LocalRotation = spacecraftParameters.SpacecraftGo.transform.eulerAngles,
+					Go = spacecraftParameters.SpacecraftGo,
+					InitialState = spacecraftParameters.GetSpacecraft(parameters.KilometersPerUnit)
+				};
+			}
+			
 			SetUpUI();
+			DrawOrbits();
 			CalculateStates();
 		}
 
 		private void DrawOrbits()
 		{
-			//Drawing start orbit
-			var orbit = OrbitHelper.GetOrbit(_initialState.Velocity, _initialState.Position,
-				parameters.GravitationalParameter);
-			orbitDrawer.DrawOrbit(orbit, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			for (int i = 0; i < _spacecrafts.Length; i++)
 			{
-				Name = "Start orbit",
-				LineColor = Color.red,
-				LineWidth = 0.01f
-			});
-			
-			//Drawing the goal orbit
-			var goal = goalOrbit.Orbit;
-			orbitDrawer.DrawOrbit(goal, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
-			{
-				Name = "Goal orbit",
-				LineColor = Color.green,
-				LineWidth = 0.01f
-			});
+				var spacecraft = _spacecrafts[i];
+				var initialState = spacecraft.InitialState;
+				var orbit = OrbitHelper.GetOrbit(initialState.Velocity, initialState.Position,
+					parameters.GravitationalParameter);
+				orbitDrawer.DrawOrbit(orbit, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+				{
+					Name = "Spacecraft #" + (i+1) + " orbit",
+					LineColor = ColorUtility.GetRandomBrightColor(),
+					LineWidth = 0.01f
+				});
+			}
 		}
 
 		private void Update()
@@ -93,17 +96,21 @@ namespace Src
 
 			_elapsedTime += Time.deltaTime * _currentTimeScale;
 			var index = TimeToIndex(_elapsedTime);
-			var state = _states[index];
-			UpdateView(state);
+			UpdateView(index);
 		}
 
-		private void UpdateView(Spacecraft state)
+		private void UpdateView(int stateIndex)
 		{
-			Vector3 newVelocity = state.Velocity.ToVector3();
-
-			_shipLocalRotation = ToEuler(state.ExhaustDirection.ToVector3());
-			parameters.SpacecraftGo.transform.eulerAngles = ToEuler(newVelocity) + _shipLocalRotation;
-			parameters.SpacecraftGo.transform.position = (state.Position / parameters.KilometersPerUnit).ToVector3();
+			for (int i = 0; i < _spacecrafts.Length; i++)
+			{
+				var spacecraft = _spacecrafts[i];
+				var state = spacecraft.States[stateIndex];
+				Vector3 newVelocity = state.Velocity.ToVector3();
+				var shipLocalRotation = spacecraft.LocalRotation;
+				shipLocalRotation = ToEuler(state.ExhaustDirection.ToVector3());
+				spacecraft.Go.transform.eulerAngles = ToEuler(newVelocity) + shipLocalRotation;
+				spacecraft.Go.transform.position = (state.Position / parameters.KilometersPerUnit).ToVector3();
+			}
 		}
 
 		private Vector3 ToEuler(Vector3 direction)
@@ -118,14 +125,18 @@ namespace Src
 
 		private void CalculateStates()
 		{
-			_states[0] = _initialState;
-			for (int i = 1; i < samplesCount; i++)
+			for (int i = 0; i < _spacecrafts.Length; i++)
 			{
-				var current = _states[i - 1];
-				//current.FuelConsumptionRate = _control.FuelConsumptionRatePercent(timeStep * (i-1));
-				current.ExhaustDirection = _control.ThrustDirection(timeStep * (i - 1));
-				var nextState = _dynamics.PropagateState(current, timeStep);
-				_states[i] = nextState;
+				var spacecraft = _spacecrafts[i];
+				var initialState = spacecraft.InitialState;
+				spacecraft.States = new Spacecraft[samplesCount];
+				spacecraft.States[0] = initialState;
+				for (int j = 1; j < samplesCount; j++)
+				{
+					var current = spacecraft.States[j - 1];
+					var nextState = _dynamics.PropagateState(current, timeStep);
+					spacecraft.States[j] = nextState;
+				}
 			}
 		}
 
@@ -151,8 +162,7 @@ namespace Src
 			_isPlaying = false;
 			var indexInt = (int) Math.Clamp((int)index, 0, samplesCount - 1);
 			_elapsedTime = IndexToTime(indexInt);
-			var state = _states[indexInt];
-			UpdateView(state);
+			UpdateView(indexInt);
 		}
 
 		private void OnPlay()

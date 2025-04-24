@@ -1,4 +1,4 @@
-﻿namespace Src.ControlGeneration
+﻿namespace Src.ControlGeneration.GeneticAlgorithms
 {
 	public class Specimen
 	{

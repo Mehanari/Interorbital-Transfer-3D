@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Src.ControlGeneration.GeneticAlgorithms
+namespace Src.GeneticAlgorithms.Crossover
 {
 	/// <summary>
 	/// Formulae for this crossover are taken from "Self-Adaptive Genetic Algorithms with Simulated Binary Crossover" by Kalyanmoy Deb

@@ -495,29 +495,16 @@ MonoBehaviour:
     kilometersPerUnit: 1000
     earthGo: {fileID: 1253148248}
     gravitationalParameter: 398600.4375
-    spacecraftGo: {fileID: 1080267309}
-    spacecraftInitialVelocityKmS: {x: 0, y: 0, z: 8}
-    spacecraftMassKg: 300
-    fuelMassKg: 200
-    exhaustDirection: {x: 0, y: 0, z: -1}
-    exhaustVelocityModuleMs: 1000
-    fuelConsumptionRateKgS: 0
-    maxFuelConsumptionRateKgS: 1
+    spacecraftParameters: {fileID: 1080267310}
   samplesCount: 100000
   timeStep: 0.1
   minTimeScale: 1
   maxTimeScale: 100
-  goalOrbit:
-    semiMajorAxis: 8419.338400188122
-    eccentricity: 0.1658485125364334
-    inclination: 1.5558479124942812
-    perigeeArgument: 0.31573258989909175
-    ascendingNodeLongitude: 6.26231958661135
-    trueAnomaly: 1.628905544660325
   timeScaleSlider: {fileID: 1739555306}
   playButton: {fileID: 1587813519}
   simulationStepSlider: {fileID: 1854395840}
   orbitDrawer: {fileID: 186833044}
+  flame: {fileID: 2147363651}
 --- !u!114 &186833044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1505,7 +1492,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 10838576}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 111078, guid: b271505711828fd4e9719f1b97a0922a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1080267310}
   m_SourcePrefab: {fileID: 100100000, guid: b271505711828fd4e9719f1b97a0922a, type: 3}
 --- !u!4 &1080267308 stripped
 Transform:
@@ -1519,6 +1510,26 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1080267307}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1080267310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080267309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a63199a880e249b7955a218b3e9bf043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spacecraftGo: {fileID: 1080267309}
+  spacecraftInitialVelocityKmS: {x: 0, y: 0, z: 0}
+  spacecraftMassKg: 0
+  fuelMassKg: 0
+  exhaustDirection: {x: 0, y: 0, z: 0}
+  exhaustVelocityModuleMs: 0
+  fuelConsumptionRateKgS: 0
+  maxFuelConsumptionRateKgS: 0
 --- !u!1 &1242027645
 GameObject:
   m_ObjectHideFlags: 0
@@ -2642,6 +2653,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2008165875}
   m_CullTransparentMesh: 1
+--- !u!1 &2147363651 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6259264452825588525, guid: 174b18a4a35d35a4f85d87b2e860ae26,
+    type: 3}
+  m_PrefabInstance: {fileID: 10838575}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -21,8 +21,6 @@ namespace Src
 		[SerializeField] private double timeStep;
 		[SerializeField] private float minTimeScale = 1;
 		[SerializeField] private float maxTimeScale = 100;
-		[Header("Orbits")] 
-		[SerializeField] private OrbitParametersEditor goalOrbit;
 		[Header("UI")] 
 		[SerializeField] private Slider timeScaleSlider;
 		[SerializeField] private Button playButton;
@@ -30,6 +28,10 @@ namespace Src
 
 		[Header("Visual features")] 
 		[SerializeField] private OrbitDrawer orbitDrawer;
+		[SerializeField] private GameObject flame;
+
+		private Orbit _goalOrbit;
+		private ControlData _controlData;
 		
 		private Vector3 _shipLocalRotation;
 		private bool _isPlaying = false;
@@ -44,16 +46,40 @@ namespace Src
 
 		private void Start()
 		{
+			var controlIo = new JsonIO<ControlData>
+			{
+				FileName = "control.json"
+			};
+			var orbitIo = new JsonIO<Orbit>
+			{
+				FileName = "goalOrbit.json"
+			};
+			var spacecraftIo = new JsonIO<Spacecraft>
+			{
+				Converters = new JsonConverter[] { new VectorJsonConverter() },
+				FileName = "spacecraft.json"
+			};
+			var spacecraft = spacecraftIo.Load();
+			_goalOrbit = orbitIo.Load();
+			_controlData = controlIo.Load();
+			var currentOrbit = OrbitHelper.GetOrbit(spacecraft.Velocity, spacecraft.Position,
+				parameters.GravitationalParameter);
+			currentOrbit.TrueAnomaly = _controlData.IgnitionTrueAnomaly;
+			var (startPosition, startVelocity) =
+				OrbitHelper.GetPositionAndVelocity(currentOrbit, parameters.GravitationalParameter);
+			spacecraft.Velocity = startVelocity;
+			spacecraft.Position = startPosition;
+			
 			_shipLocalRotation = parameters.SpacecraftGo.transform.eulerAngles;
 			_currentTimeScale = minTimeScale;
 			_states = new Spacecraft[samplesCount];
-			_initialState = parameters.Spacecraft;
+			_initialState = spacecraft;
 			
 			_control = new PolynomialThrustControl
 			(
-				alphaPolynomial: new Polynomial(0, 0.5, 0),
-				betaPolynomial: new Polynomial(0, 0.5, 0),
-				gammaPolynomial: new Polynomial(0, 0, 0)
+				alphaPolynomial: new Polynomial(_controlData.AlphaPolynomialCoefficients),
+				betaPolynomial: new Polynomial(_controlData.BetaPolynomialCoefficients),
+				gammaPolynomial: new Polynomial(_controlData.GammaPolynomialCoefficients)
 			);
 			_dynamics = new Rkf45Dynamics()
 			{
@@ -78,8 +104,7 @@ namespace Src
 			});
 			
 			//Drawing the goal orbit
-			var goal = goalOrbit.Orbit;
-			orbitDrawer.DrawOrbit(goal, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
+			orbitDrawer.DrawOrbit(_goalOrbit, parameters.EarthGo.transform.position, 1000, new OrbitLineParameters
 			{
 				Name = "Goal orbit",
 				LineColor = Color.green,
@@ -100,9 +125,18 @@ namespace Src
 		private void UpdateView(Spacecraft state)
 		{
 			Vector3 newVelocity = state.Velocity.ToVector3();
+			var thrustDirection = (state.ExhaustDirection * (-1)).ToVector3();
 
-			_shipLocalRotation = ToEuler(state.ExhaustDirection.ToVector3());
-			parameters.SpacecraftGo.transform.eulerAngles = ToEuler(newVelocity) + _shipLocalRotation;
+			if (state.FuelConsumptionRate <= 0)
+			{
+				flame.transform.localScale = Vector3.zero;
+			}
+			else
+			{
+				flame.transform.localScale = Vector3.one;
+			}
+			_shipLocalRotation = ToEuler(thrustDirection);
+			parameters.SpacecraftGo.transform.eulerAngles = _shipLocalRotation;
 			parameters.SpacecraftGo.transform.position = (state.Position / parameters.KilometersPerUnit).ToVector3();
 		}
 
@@ -119,13 +153,23 @@ namespace Src
 		private void CalculateStates()
 		{
 			_states[0] = _initialState;
+			var elapsedTime = 0d;
 			for (int i = 1; i < samplesCount; i++)
 			{
 				var current = _states[i - 1];
-				//current.FuelConsumptionRate = _control.FuelConsumptionRatePercent(timeStep * (i-1));
-				current.ExhaustDirection = _control.ThrustDirection(timeStep * (i - 1));
+				if (elapsedTime < _controlData.BurnTime)
+				{
+					current.FuelConsumptionRate = _control.FuelConsumptionRatePercent(timeStep * (i-1));
+					current.ExhaustDirection = _control.ThrustDirection(timeStep * (i - 1)) * -1;
+				}
+				else
+				{
+					current.FuelConsumptionRate = 0;
+				}
+				
 				var nextState = _dynamics.PropagateState(current, timeStep);
 				_states[i] = nextState;
+				elapsedTime += timeStep;
 			}
 		}
 

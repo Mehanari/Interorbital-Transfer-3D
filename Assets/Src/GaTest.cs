@@ -4,6 +4,8 @@ using MehaMath.Math.Components.Json;
 using Newtonsoft.Json;
 using Src.ControlGeneration;
 using Src.ControlGeneration.GeneticAlgorithms;
+using Src.GeneticAlgorithms;
+using Src.GeneticAlgorithms.Crossover;
 using Src.Model;
 using Src.SpacecraftDynamics.CentralBodyDynamics;
 using UnityEngine;
@@ -26,9 +28,10 @@ namespace Src
 			var goalOrbit = orbitIo.Load();
 			var spacecraft = spacecraftIo.Load();
 
+			var polynomialsDegree = 5;
 			var mu = 398600.4418;
-			var bounds = new DynamicControlGenomeBounds(polynomialsDegree: 5, coefficientMin: - Math.PI, coefficientMax: Math.PI, 
-				trueAnomalyMin: 0, trueAnomalyMax: Math.PI*2, burnMinTime: 10, burnMaxTime: 500);
+			var bounds = new DynamicControlGenomeBounds(polynomialsDegree: polynomialsDegree, coefficientMin: - Math.PI, coefficientMax: Math.PI, 
+				trueAnomalyMin: 0, trueAnomalyMax: Math.PI*2, burnMinTime: 10, burnMaxTime: 1000);
 			var dynamics = new Rkf45Dynamics()
 			{
 				CentralBodyPosition = new Vector(0d, 0d, 0d),
@@ -36,18 +39,32 @@ namespace Src
 			};
 			var coefficients = new OrbitWeightedCoefficients(1, 1, 1, 1, 1);
 			var parentsSelector = new TournamentSelector(3);
-			var crossoverOperator = new SbxCrossoverOperator(0.9, 15);
-			var mutator = new PolynomialControlMutator(15, 0.1, bounds);
+			var crossoverOperator = new SbxCrossoverOperator(0.9, 10);
+			var mutator = new PolynomialControlMutator(10, 0.15, bounds);
+			var initialPopulationGenerator = new UniformPopulationGenerator(bounds);
 			var controlEvaluator =
 				new ControlPrecisionEvaluator(spacecraft, goalOrbit, dynamics, mu, 0.1, coefficients);
-			var ga = new GaControlGenerator(0.01, 200, 100, 198, 1,
-				bounds, controlEvaluator, parentsSelector, crossoverOperator, mutator)
+			var genomeEvaluator = new ControlGenomeEvaluator(controlEvaluator, polynomialsDegree);
+			var genomeClamper = new ControlGenomeClamper(bounds);
+			var ga = new Ga(
+				initialPopulationGenerator: initialPopulationGenerator, 
+				evaluator: genomeEvaluator, 
+				parentsPoolSelector: parentsSelector,
+				crossoverOperator: crossoverOperator,
+				mutator: mutator,
+				genomeClamper: genomeClamper
+				)
 			{
-				InitialState = spacecraft,
-				GoalOrbit = goalOrbit
+				DesirableFitness = 0.1d
 			};
 
-			var control = ga.GenerateControl();
+			var controlGenome = ga.Evolve();
+
+			var controlIo = new JsonIO<ControlData>
+			{
+				FileName = "control.json"
+			};
+			controlIo.Save(GenomeConverter.FromGenome(controlGenome, polynomialsDegree));
 		}
 	}
 }

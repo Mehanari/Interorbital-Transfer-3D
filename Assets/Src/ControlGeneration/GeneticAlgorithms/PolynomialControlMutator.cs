@@ -1,4 +1,5 @@
 ﻿using System;
+using Src.GeneticAlgorithms;
 
 namespace Src.ControlGeneration.GeneticAlgorithms
 {
@@ -54,7 +55,7 @@ namespace Src.ControlGeneration.GeneticAlgorithms
 			if (rnd.NextDouble() < MutationProbability)
 			{
 				var burnTimeBounds = ControlGenomeBounds.BurnTimeRange();
-				var maxBurnTimeChange = Math.Abs(burnTimeBounds.max - burnTimeBounds.max);
+				var maxBurnTimeChange = Math.Abs(burnTimeBounds.max - burnTimeBounds.min);
 				var perturbation = GetPerturbation();
 				specimen.Genome[1] += perturbation * maxBurnTimeChange;
 			}

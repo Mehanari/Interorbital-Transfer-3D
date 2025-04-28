@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Src.ControlGeneration.GeneticAlgorithms
+namespace Src.GeneticAlgorithms
 {
 	public class SpecimenComparer : IComparer<Specimen>
 	{

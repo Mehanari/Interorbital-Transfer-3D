@@ -1,4 +1,4 @@
-﻿namespace Src.ControlGeneration.GeneticAlgorithms
+﻿namespace Src.GeneticAlgorithms.Crossover
 {
 	public interface ICrossoverOperator
 	{

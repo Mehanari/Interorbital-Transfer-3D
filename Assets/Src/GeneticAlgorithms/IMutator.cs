@@ -1,4 +1,4 @@
-﻿namespace Src.ControlGeneration.GeneticAlgorithms
+﻿namespace Src.GeneticAlgorithms
 {
 	public interface IMutator
 	{

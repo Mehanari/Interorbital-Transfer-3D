@@ -4,7 +4,7 @@ using Src.Helpers;
 using Src.Model;
 using Src.SpacecraftDynamics;
 
-namespace Src.ControlGeneration
+namespace Src.OrbitTransferControlGeneration
 {
 	/// <summary>
 	/// Applies a control, represented by ControlData object, to a spacecraft, represented by its initial state.
@@ -73,6 +73,8 @@ namespace Src.ControlGeneration
 			return Math.Pow(semiMajorAxisDiff/_coefficients.SemiMajorAxisWeight, 2) + Math.Pow(eccentricityDiff/_coefficients.EccentricityWeight, 2) + Math.Pow(inclinationDiff/_coefficients.InclinationWeight, 2)
 			       + Math.Pow(perigeeArgumentDiff/_coefficients.PerigeeArgumentWeight, 2) + Math.Pow(ascendingNodeLongitudeDiff/_coefficients.AscendingNodeLongitudeWeight, 2);
 		}
-		
+
+
+
 	}
 }

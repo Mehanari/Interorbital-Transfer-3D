@@ -1,7 +1,7 @@
 ﻿using System;
 using Src.GeneticAlgorithms;
 
-namespace Src.ControlGeneration.GeneticAlgorithms
+namespace Src.OrbitTransferControlGeneration.GaComponents
 {
 	public class UniformPopulationGenerator : IPopulationGenerator
 	{

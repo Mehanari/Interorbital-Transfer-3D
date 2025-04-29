@@ -1,12 +1,11 @@
-﻿using System;
-using MehaMath.Math.Components;
+﻿using MehaMath.Math.Components;
 using Src.Helpers;
 using Src.Model;
 using Src.Visualisation;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Src
+namespace Src.ManualTests
 {
 	public class OrbitsTest : MonoBehaviour
 	{

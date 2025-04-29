@@ -1,6 +1,6 @@
 ﻿using Src.Model;
 
-namespace Src.ControlGeneration
+namespace Src.OrbitTransferControlGeneration
 {
 	public abstract class OrbitTransferControlGenerator
 	{

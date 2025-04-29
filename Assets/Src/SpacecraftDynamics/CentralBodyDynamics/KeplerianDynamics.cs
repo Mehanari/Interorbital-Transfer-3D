@@ -57,6 +57,8 @@ namespace Src.SpacecraftDynamics.CentralBodyDynamics
 			var mu = GravitationalParameter;
 			var orbit = OrbitHelper.GetOrbit(spacecraft.Velocity, spacecraft.Position, mu);
 			var meanMotion = Math.Sqrt(mu / Math.Pow(orbit.SemiMajorAxis, 3)); //Formula from Bate, Muller, and White "Fundamentals of astrodynamics", page 185.
+
+			
 			var cosE0 = (orbit.Eccentricity + Math.Cos(orbit.TrueAnomaly)) /
 			            (1 + orbit.Eccentricity * Math.Cos(orbit.TrueAnomaly)); //E0 is initial eccentric anomaly. This and next formulae are from "Fundamentals of astrodynamics and applications" by David A. Vallado. Page 47 equations (2-9).
 			var sinE0 = Math.Sqrt(1 - orbit.Eccentricity * orbit.Eccentricity) * Math.Sin(orbit.TrueAnomaly) /
@@ -65,11 +67,15 @@ namespace Src.SpacecraftDynamics.CentralBodyDynamics
 			var meanAnomaly0 = E0 - orbit.Eccentricity * Math.Sin(E0); //Formula from Bate, Muller, and White "Fundamentals of astrodynamics", page 185, equation (4.2-6)
 			var newMeanAnomaly = meanAnomaly0 + meanMotion * deltaT;
 			var newEccentricAnomaly = SolveKeplerEquation(newMeanAnomaly, orbit.Eccentricity);
+			
+			
 			var cosTrueAnomaly = (Math.Cos(newEccentricAnomaly) - orbit.Eccentricity) /
 			                     (1 - orbit.Eccentricity * Math.Cos(newEccentricAnomaly)); //This and next formulae are from Bate, Muller, and White "Fundamentals of astrodynamics", page 406, equations (9.4-36) and (9.4-37).
 			var sinTrueAnomaly = Math.Sqrt(1 - orbit.Eccentricity * orbit.Eccentricity) *
 				Math.Sin(newEccentricAnomaly) / (1 - orbit.Eccentricity * Math.Cos(newEccentricAnomaly));
 			var trueAnomaly = Math.Atan2(sinTrueAnomaly, cosTrueAnomaly);
+
+			
 			orbit.TrueAnomaly = trueAnomaly;
 			var (newPosition, newVelocity) = OrbitHelper.GetPositionAndVelocity(orbit, mu);
 			var newState = spacecraft.Clone();

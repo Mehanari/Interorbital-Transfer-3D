@@ -1,7 +1,7 @@
 ﻿using System;
 using Src.GeneticAlgorithms;
 
-namespace Src.ControlGeneration.GeneticAlgorithms
+namespace Src.OrbitTransferControlGeneration.GaComponents
 {
 	/// <summary>
 	/// Polynomial mutator specifically for spacecraft control genes.

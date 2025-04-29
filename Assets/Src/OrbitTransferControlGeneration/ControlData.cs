@@ -1,8 +1,7 @@
-﻿
-using System;
+﻿using System;
 using Newtonsoft.Json;
 
-namespace Src.Model
+namespace Src.OrbitTransferControlGeneration
 {
 	[Serializable]
 	public class ControlData

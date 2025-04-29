@@ -1,4 +1,4 @@
-﻿namespace Src.ControlGeneration
+﻿namespace Src.OrbitTransferControlGeneration
 {
 	public class OrbitWeightedCoefficients
 	{

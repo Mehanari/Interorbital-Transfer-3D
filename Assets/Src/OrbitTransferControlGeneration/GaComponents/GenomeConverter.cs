@@ -1,6 +1,6 @@
 ﻿using Src.Model;
 
-namespace Src.ControlGeneration.GeneticAlgorithms
+namespace Src.OrbitTransferControlGeneration.GaComponents
 {
 	public static class GenomeConverter
 	{

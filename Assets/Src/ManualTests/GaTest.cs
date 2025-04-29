@@ -2,15 +2,15 @@
 using MehaMath.Math.Components;
 using MehaMath.Math.Components.Json;
 using Newtonsoft.Json;
-using Src.ControlGeneration;
-using Src.ControlGeneration.GeneticAlgorithms;
 using Src.GeneticAlgorithms;
 using Src.GeneticAlgorithms.Crossover;
 using Src.Model;
+using Src.OrbitTransferControlGeneration;
+using Src.OrbitTransferControlGeneration.GaComponents;
 using Src.SpacecraftDynamics.CentralBodyDynamics;
 using UnityEngine;
 
-namespace Src
+namespace Src.ManualTests
 {
 	public class GaTest : MonoBehaviour
 	{

@@ -1,4 +1,4 @@
-﻿namespace Src.ControlGeneration.GeneticAlgorithms
+﻿namespace Src.OrbitTransferControlGeneration.GaComponents
 {
 	public interface IControlGenomeBounds
 	{

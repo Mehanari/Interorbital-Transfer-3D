@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Src.ControlGeneration.GeneticAlgorithms
+namespace Src.OrbitTransferControlGeneration.GaComponents
 {
 	public class DynamicControlGenomeBounds : IControlGenomeBounds
 	{

@@ -1,0 +1,1 @@
+This is a simplified simulation, created with a purpose of understanding control optimization techniques in cyclic systems.

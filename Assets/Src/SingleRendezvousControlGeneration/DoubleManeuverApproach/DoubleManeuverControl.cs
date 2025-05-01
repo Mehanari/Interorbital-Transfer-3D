@@ -1,20 +1,20 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Src.SingleRendezvousControlGeneration
+namespace Src.SingleRendezvousControlGeneration.DoubleManeuverApproach
 {
 	[Serializable]
-	public class ControlData
+	public class DoubleManeuverControl
 	{
 		/// <summary>
 		/// Maneuver to get to the transfer orbit.
 		/// </summary>
 		[JsonProperty("startManeuver")]
-		public ManeuverData StartManeuver { get; set; }
+		public Maneuver StartManeuver { get; set; }
 		/// <summary>
 		/// Maneuver to get from transfer orbit to the rendezvous target.
 		/// </summary>
 		[JsonProperty("endManeuver")]
-		public ManeuverData EndManeuver { get; set; }
+		public Maneuver EndManeuver { get; set; }
 	}
 }

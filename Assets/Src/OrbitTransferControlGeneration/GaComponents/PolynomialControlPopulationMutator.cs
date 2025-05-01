@@ -1,12 +1,13 @@
 ﻿using System;
 using Src.GeneticAlgorithms;
+using Src.GeneticAlgorithms.Mutators;
 
 namespace Src.OrbitTransferControlGeneration.GaComponents
 {
 	/// <summary>
-	/// Polynomial mutator specifically for spacecraft control genes.
+	/// Polynomial populationMutator specifically for spacecraft control genes.
 	/// </summary>
-	public class PolynomialControlMutator : IMutator
+	public class PolynomialControlPopulationMutator : IPopulationMutator
 	{
 		/// <summary>
 		/// Bigger value of this parameter leads to smaller mutations being more likely.
@@ -19,7 +20,7 @@ namespace Src.OrbitTransferControlGeneration.GaComponents
 		/// </summary>
 		public IControlGenomeBounds ControlGenomeBounds { get; set; }
 
-		public PolynomialControlMutator(double distributionIndex, double mutationProbability, IControlGenomeBounds controlGenomeBounds)
+		public PolynomialControlPopulationMutator(double distributionIndex, double mutationProbability, IControlGenomeBounds controlGenomeBounds)
 		{
 			DistributionIndex = distributionIndex;
 			MutationProbability = mutationProbability;

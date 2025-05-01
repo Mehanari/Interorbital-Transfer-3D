@@ -49,6 +49,11 @@ namespace Src
 
 		private void Start()
 		{
+			var spacecraftIo = new JsonIO<Spacecraft>()
+			{
+				Converters = new JsonConverter[]{new VectorJsonConverter()}
+			};
+			
 			_currentTimeScale = minTimeScale;
 			_dynamics = new Rkf45Dynamics()
 			{
@@ -60,11 +65,22 @@ namespace Src
 			for (int i = 0; i < parameters.SpacecraftsParameters.Count; i++)
 			{
 				var spacecraftParameters = parameters.SpacecraftsParameters[i];
+				var spacecraft = spacecraftParameters.GetSpacecraft(parameters.KilometersPerUnit);
+				if (i == 0)
+				{
+					spacecraftIo.FileName = "Rendezvous/carrier.json";
+					spacecraftIo.Save(spacecraft);
+				}
+				else
+				{
+					spacecraftIo.FileName = "Rendezvous/satellite.json";
+					spacecraftIo.Save(spacecraft);
+				}
 				_spacecrafts[i] = new SpacecraftData
 				{
 					LocalRotation = spacecraftParameters.SpacecraftGo.transform.eulerAngles,
 					Go = spacecraftParameters.SpacecraftGo,
-					InitialState = spacecraftParameters.GetSpacecraft(parameters.KilometersPerUnit)
+					InitialState = spacecraft
 				};
 			}
 			

@@ -1,5 +1,6 @@
 ﻿using System;
 using Src.GeneticAlgorithms.Crossover;
+using Src.GeneticAlgorithms.Mutators;
 
 namespace Src.GeneticAlgorithms
 {
@@ -24,7 +25,7 @@ namespace Src.GeneticAlgorithms
 		private IGenomeEvaluator Evaluator { get; set; }
 		private TournamentSelector ParentsPoolSelector { get; set; }
 		private ICrossoverOperator CrossoverOperator { get; set; }
-		private IMutator Mutator { get; set; }
+		private IPopulationMutator PopulationMutator { get; set; }
 
 		/// <summary>
 		/// Creates GA with default parameters.
@@ -34,20 +35,20 @@ namespace Src.GeneticAlgorithms
 		/// <param name="evaluator"></param>
 		/// <param name="parentsPoolSelector"></param>
 		/// <param name="crossoverOperator"></param>
-		/// <param name="mutator"></param>
-		public Ga(IPopulationGenerator initialPopulationGenerator, IGenomeEvaluator evaluator, TournamentSelector parentsPoolSelector, ICrossoverOperator crossoverOperator, IMutator mutator, IGenomeClamper genomeClamper)
+		/// <param name="populationMutator"></param>
+		public Ga(IPopulationGenerator initialPopulationGenerator, IGenomeEvaluator evaluator, TournamentSelector parentsPoolSelector, ICrossoverOperator crossoverOperator, IPopulationMutator populationMutator, IGenomeClamper genomeClamper)
 		{
 			InitialPopulationGenerator = initialPopulationGenerator;
 			Evaluator = evaluator;
 			ParentsPoolSelector = parentsPoolSelector;
 			CrossoverOperator = crossoverOperator;
-			Mutator = mutator;
+			PopulationMutator = populationMutator;
 			GenomeClamper = genomeClamper;
 		}
 
 		public Ga(double elitismIndex, int populationSize, int maxGenerations, int parentPoolSize, 
 			double desirableFitness, IGenomeEvaluator evaluator, 
-			TournamentSelector parentsPoolSelector, ICrossoverOperator crossoverOperator, IMutator mutator, IPopulationGenerator initialPopulationGenerator, IGenomeClamper genomeClamper)
+			TournamentSelector parentsPoolSelector, ICrossoverOperator crossoverOperator, IPopulationMutator populationMutator, IPopulationGenerator initialPopulationGenerator, IGenomeClamper genomeClamper)
 		{
 			ElitismIndex = elitismIndex;
 			PopulationSize = populationSize;
@@ -57,7 +58,7 @@ namespace Src.GeneticAlgorithms
 			Evaluator = evaluator;
 			ParentsPoolSelector = parentsPoolSelector;
 			CrossoverOperator = crossoverOperator;
-			Mutator = mutator;
+			PopulationMutator = populationMutator;
 			InitialPopulationGenerator = initialPopulationGenerator;
 			GenomeClamper = genomeClamper;
 		}
@@ -84,7 +85,7 @@ namespace Src.GeneticAlgorithms
 				var elites = SelectElite(population);
 				var parentsPool = ParentsPoolSelector.SelectPool(population, ParentPoolSize);
 				var children = GenerateChildren(parentsPool, PopulationSize - elites.Length);
-				Mutator.MutatePopulation(children);
+				PopulationMutator.MutatePopulation(children);
 				ClampGenes(children);
 				
 				var newPopulation = new Specimen[PopulationSize];

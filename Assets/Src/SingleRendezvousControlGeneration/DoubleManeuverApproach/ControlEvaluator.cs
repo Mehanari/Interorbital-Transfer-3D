@@ -4,7 +4,7 @@ using Src.GeneticAlgorithms;
 using Src.Model;
 using Src.SpacecraftDynamics.CentralBodyDynamics;
 
-namespace Src.SingleRendezvousControlGeneration
+namespace Src.SingleRendezvousControlGeneration.DoubleManeuverApproach
 {
 	public class ControlEvaluator : IGenomeEvaluator
 	{
@@ -84,7 +84,7 @@ namespace Src.SingleRendezvousControlGeneration
 		}
 
 		private (Spacecraft spacecraftState, Spacecraft satelliteState) ApplyManeuver(Spacecraft spacecraftInitialState,
-			Spacecraft satelliteInitialState, ManeuverData maneuver)
+			Spacecraft satelliteInitialState, Maneuver maneuver)
 		{
 			var maneuverController = new PolynomialThrustControl(
 				alphaPolynomial: new Polynomial(maneuver.AlphaPolynomialCoefficients),
@@ -103,6 +103,8 @@ namespace Src.SingleRendezvousControlGeneration
 				spacecraft = _rkf45Dynamics.PropagateState(spacecraft, _timeStep);
 				elapsedTime += _timeStep;
 			}
+
+			spacecraft.FuelConsumptionRate = 0; //Don't forget to turn off the engine.
 			//Moving satellite. We use elapsed time to ensure states synchronization
 			//If we use BurnTime instead, we may end up with satellite state slightly from the future, or from the past, relatively to the spacecraft state.
 			//As a result we have states for spacecraft and a satellite for the same moment in time

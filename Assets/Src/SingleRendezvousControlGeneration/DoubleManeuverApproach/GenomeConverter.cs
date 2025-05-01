@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace Src.SingleRendezvousControlGeneration
+namespace Src.SingleRendezvousControlGeneration.DoubleManeuverApproach
 {
 	public static class GenomeConverter
 	{
-		public static ControlData FromGenome(double[] genome, int polynomialsDegree)
+		public static DoubleManeuverControl FromGenome(double[] genome, int polynomialsDegree)
 		{
 			//First two genes are drift time and burn time
 			//Next 3 * (polynomialDegree - 1) genes are coefficients for polynomials
 			//We multiply by 3 because we have 3 polynomials: alpha, beta and gamma
-			var maneuverGenomeLength = 2 + 3 * (polynomialsDegree - 1);
+			var maneuverGenomeLength = 2 + 3 * (polynomialsDegree + 1);
 			//We have 2 maneuvers
 			if (genome.Length != 2*maneuverGenomeLength)
 			{
@@ -24,14 +24,14 @@ namespace Src.SingleRendezvousControlGeneration
 			Array.Copy(genome, maneuverGenomeLength, endManeuverGenome, 0, maneuverGenomeLength);
 			var startManeuver = ManeuverFromGenome(startManeuverGenome, polynomialsDegree);
 			var endManeuver = ManeuverFromGenome(endManeuverGenome, polynomialsDegree);
-			return new ControlData()
+			return new DoubleManeuverControl()
 			{
 				StartManeuver = startManeuver,
 				EndManeuver = endManeuver
 			};
 		}
 
-		private static ManeuverData ManeuverFromGenome(double[] maneuverGenome, int polynomialsDegree)
+		public static Maneuver ManeuverFromGenome(double[] maneuverGenome, int polynomialsDegree)
 		{
 			var driftTime = maneuverGenome[0];
 			var burnTime = maneuverGenome[1];
@@ -54,7 +54,7 @@ namespace Src.SingleRendezvousControlGeneration
 				gammaCoefs[i] = maneuverGenome[i + 2 + polynomialCoefficientsCount * 2];
 			}
 
-			return new ManeuverData()
+			return new Maneuver()
 			{
 				DriftTime = driftTime,
 				BurnTime = burnTime,

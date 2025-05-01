@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Src.SingleRendezvousControlGeneration
 {
 	[Serializable]
-	public class ManeuverData
+	public class Maneuver
 	{
 		/// <summary>
 		/// How much time to drift before igniting the engine.

@@ -19,7 +19,8 @@ namespace Src.EditorTools
 		[SerializeField] private double maxFuelConsumptionRateKgS;
 		
 		public GameObject SpacecraftGo => spacecraftGo;
-		public Vector3 SpacecraftInitialVelocityKmS => spacecraftInitialVelocityKmS;
+
+		public Vector3 SpacecraftInitialVelocityKmS => spacecraftInitialVelocityKmS; 
 		public double SpacecraftMassKg => spacecraftMassKg;
 		public double FuelMassKg => fuelMassKg;
 		public Vector3 ExhaustDirection => exhaustDirection;

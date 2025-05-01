@@ -4,10 +4,10 @@ using MehaMath.Math.Components.Json;
 using Newtonsoft.Json;
 using Src.GeneticAlgorithms;
 using Src.GeneticAlgorithms.Crossover;
+using Src.GeneticAlgorithms.Mutators;
 using Src.Model;
-using Src.OrbitTransferControlGeneration;
-using Src.OrbitTransferControlGeneration.GaComponents;
-using Src.SpacecraftDynamics.CentralBodyDynamics;
+using Src.SingleRendezvousControlGeneration;
+using Src.SingleRendezvousControlGeneration.DoubleManeuverApproach;
 using UnityEngine;
 
 namespace Src.ManualTests
@@ -16,55 +16,38 @@ namespace Src.ManualTests
 	{
 		private void Start()
 		{
-			var orbitIo = new JsonIO<Orbit>
-			{
-				FileName = "goalOrbit.json"
-			};
 			var spacecraftIo = new JsonIO<Spacecraft>
 			{
 				Converters = new JsonConverter[] { new VectorJsonConverter() },
-				FileName = "spacecraft.json"
 			};
-			var goalOrbit = orbitIo.Load();
-			var spacecraft = spacecraftIo.Load();
 
+			var carrier =
+				spacecraftIo.Load(
+					"C:\\Users\\User\\AppData\\LocalLow\\DefaultCompany\\Interorbital Transfer 3D\\Rendezvous\\carrier.json");
+			var targetSatellite =
+				spacecraftIo.Load(
+					"C:\\Users\\User\\AppData\\LocalLow\\DefaultCompany\\Interorbital Transfer 3D\\Rendezvous\\satellite.json");
+
+			var polynomialsCount = 3;
 			var polynomialsDegree = 5;
 			var mu = 398600.4418;
-			var bounds = new DynamicControlGenomeBounds(polynomialsDegree: polynomialsDegree, coefficientMin: - Math.PI, coefficientMax: Math.PI, 
-				trueAnomalyMin: 0, trueAnomalyMax: Math.PI*2, burnMinTime: 10, burnMaxTime: 1000);
-			var dynamics = new Rkf45Dynamics()
-			{
-				CentralBodyPosition = new Vector(0d, 0d, 0d),
-				GravitationalParameter = mu
-			};
-			var coefficients = new OrbitWeightedCoefficients(1, 1, 1, 1, 1);
-			var parentsSelector = new TournamentSelector(3);
-			var crossoverOperator = new SbxCrossoverOperator(0.9, 10);
-			var mutator = new PolynomialControlMutator(10, 0.15, bounds);
+
+			var bounds = new DynamicManeuverBounds(10, 1000, 
+				0, 10000, -Math.PI, Math.PI, polynomialsDegree);
 			var initialPopulationGenerator = new UniformPopulationGenerator(bounds);
-			var controlEvaluator =
-				new ControlPrecisionEvaluator(spacecraft, goalOrbit, dynamics, mu, 0.1, coefficients);
-			var genomeEvaluator = new ControlGenomeEvaluator(controlEvaluator, polynomialsDegree);
-			var genomeClamper = new ControlGenomeClamper(bounds);
-			var ga = new Ga(
-				initialPopulationGenerator: initialPopulationGenerator, 
-				evaluator: genomeEvaluator, 
-				parentsPoolSelector: parentsSelector,
-				crossoverOperator: crossoverOperator,
-				mutator: mutator,
-				genomeClamper: genomeClamper
-				)
-			{
-				DesirableFitness = 0.1d
-			};
+			var evaluator = new ControlEvaluator(polynomialsDegree, mu, new Vector(0, 0, 0), 0.1, carrier,
+				targetSatellite,
+				0.5, 1, 0.1);
+			var parentsPoolSelector = new TournamentSelector(5);
+			var crossoverOperator = new SbxCrossoverOperator(0.9, 15);
+			var geneMutator = new PolynomialGeneMutator(15, 0.1);
+			var populationMutator = new DoubleManeuverMutator(geneMutator, bounds, polynomialsCount);
+			var clamper = new DoubleManeuverGenomeClamper(bounds, polynomialsCount);
+			var ga = new Ga(initialPopulationGenerator, evaluator, parentsPoolSelector, crossoverOperator,
+				populationMutator, clamper);
+			ga.DesirableFitness = 1;
 
-			var controlGenome = ga.Evolve();
-
-			var controlIo = new JsonIO<ControlData>
-			{
-				FileName = "control.json"
-			};
-			controlIo.Save(GenomeConverter.FromGenome(controlGenome, polynomialsDegree));
+			var result = ga.Evolve();
 		}
 	}
 }

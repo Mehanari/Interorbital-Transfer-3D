@@ -7,7 +7,7 @@ using Src.SpacecraftDynamics;
 namespace Src.OrbitTransferControlGeneration
 {
 	/// <summary>
-	/// Applies a control, represented by ControlData object, to a spacecraft, represented by its initial state.
+	/// Applies a control, represented by DoubleManeuverControl object, to a spacecraft, represented by its initial state.
 	/// Calculates the difference between the goal orbit and result orbit, reached after applying control. 
 	/// </summary>
 	public class ControlPrecisionEvaluator

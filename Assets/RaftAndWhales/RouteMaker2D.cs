@@ -69,17 +69,45 @@ namespace RaftAndWhales
 					var current = _helperPoints[i];
 					var next = _helperPoints[i + 1];
 					points.Add(current);
-					points.AddRange(GetPointsBetween(current, next));
+					points.AddRange(GetPointsBetweenRect(current, next));
 				}
 				points.Add(_helperPoints[^1]);
-				points.AddRange(GetPointsBetween(_helperPoints[^1], _helperPoints[0]));
+				points.AddRange(GetPointsBetweenRect(_helperPoints[^1], _helperPoints[0]));
 				points.Add(_helperPoints[0]);
 				return points.ToArray();
 			}
 			return Array.Empty<Vector2Int>();
 		}
 
-		private List<Vector2Int> GetPointsBetween(Vector2Int start, Vector2Int end)
+		private List<Vector2Int> GetPointsBetweenRect(Vector2Int start, Vector2Int end)
+		{
+			var points = new List<Vector2Int>();
+
+			var xStep = start.x < end.x ? 1 : -1;
+			var yStep = start.y < end.y ? 1 : -1;
+			var xDistance = Math.Abs(start.x - end.x);
+			var yDistance = Math.Abs(start.y - end.y);
+			var xStepsLeft = xDistance;
+			var yStepsLeft = yDistance;
+			var currentPoint = start;
+			while (xStepsLeft > 0)
+			{
+				currentPoint.x+=xStep;
+				xStepsLeft--;
+				points.Add(currentPoint);
+			}
+
+			while (yStepsLeft > 0)
+			{
+				currentPoint.y+=yStep;
+				yStepsLeft--;
+				points.Add(currentPoint);
+			}
+
+			return points;
+		}
+
+		private List<Vector2Int> GetPointsBetweenDirected(Vector2Int start, Vector2Int end)
 		{
 			var points = new List<Vector2Int>();
 

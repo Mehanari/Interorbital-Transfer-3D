@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace RaftAndWhales.Editor
+namespace BoatAndRafts.Src.Editor
 {
 	[CustomEditor(typeof(MonoBehaviour), editorForChildClasses: true)]
 	public class MonoBehaviourTooltipDrawer : UnityEditor.Editor
@@ -21,11 +21,14 @@ namespace RaftAndWhales.Editor
 		}
 		public override void OnInspectorGUI()
 		{
-			var tooltipStyle = new GUIStyle(EditorStyles.label);
-			tooltipStyle.wordWrap = true;
-			tooltipStyle.richText = true;
-			tooltipStyle.padding = new RectOffset(5, 5, 5, 5);
-			EditorGUILayout.LabelField(tooltip, tooltipStyle);
+			if (!string.IsNullOrEmpty(tooltip))
+			{
+				var tooltipStyle = new GUIStyle(EditorStyles.label);
+				tooltipStyle.wordWrap = true;
+				tooltipStyle.richText = true;
+				tooltipStyle.padding = new RectOffset(5, 5, 5, 5);
+				EditorGUILayout.LabelField(tooltip, tooltipStyle);
+			}
 			base.OnInspectorGUI();
 		}
 	}

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RaftAndWhales
+namespace BoatAndRafts.Src
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	public class ClassTooltipAttribute : Attribute

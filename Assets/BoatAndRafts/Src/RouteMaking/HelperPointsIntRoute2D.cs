@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
-namespace RaftAndWhales
+namespace BoatAndRafts.Src.RouteMaking
 {
 	[ClassTooltip("Treats every child transform as a point for making a route.\nRounds down the coordinates values to integers.\n" +
 	              "If there is no points, creates a square route between (0, 0) and (1, 1) world coordinates.\n" +
 	              "If there are two points, creates a polyline between them.\n" +
 	              "The route will be build from the first child (top) to the last (bottom), so the order matters.")]
-	public class RouteMaker2D : MonoBehaviour
+	public class HelperPointsIntRoute2D : IntRoute2D
 	{
-		[SerializeField] private Color routeColor;
 		private Vector2Int[] _helperPoints = Array.Empty<Vector2Int>();
 
 		private Vector2Int[] ZeroSquare => new[]
@@ -31,7 +29,7 @@ namespace RaftAndWhales
 
 		private void OnDrawGizmos()
 		{
-			Gizmos.color = routeColor;
+			Gizmos.color = Color.red;
 			UpdateHelperPoints();
 			var routePoints = GetRoutePoints();
 			for (int i = 0; i < routePoints.Length - 1; i++)
@@ -46,7 +44,7 @@ namespace RaftAndWhales
 		/// Returns points in clockwise order.
 		/// </summary>
 		/// <returns></returns>
-		public Vector2Int[] GetRoutePoints()
+		public override Vector2Int[] GetRoutePoints()
 		{
 			if (_helperPoints.Length == 0)
 			{

@@ -112,7 +112,7 @@ namespace MehaMath.Math.RootsFinding
             while (improvement > tolerance && iteration < iterationsLimit)
             {
                 iteration++;
-                var gradient = partialDerivatives.Calculate(guess);
+                var gradient = partialDerivatives.Calculate(guess).Normalized();
                 var nextGuess = guess - gradient * step;
                 var nextHeight = objective(nextGuess);
                 improvement = System.Math.Abs(nextHeight - height);

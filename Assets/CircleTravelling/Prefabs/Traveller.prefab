@@ -255,6 +255,7 @@ MonoBehaviour:
   angularVelocity: 1
   initialAngle: 0.7853982
   rendezvousTime: 1.31
+  travellerName: 
 --- !u!114 &215413475879520317
 MonoBehaviour:
   m_ObjectHideFlags: 0

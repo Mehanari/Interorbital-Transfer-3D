@@ -15,7 +15,9 @@ namespace CircleTravelling.Src
         [SerializeField] private float angularVelocity;
         [SerializeField] private float initialAngle;
         [SerializeField] [Min(0f)] private float rendezvousTime;
+        [SerializeField] private string travellerName;
 
+        public string Name => travellerName;
         public float Radius => radius;
         public float AngularVelocity => angularVelocity;
         public float InitialAngle => initialAngle;

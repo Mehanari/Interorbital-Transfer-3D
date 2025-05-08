@@ -138,6 +138,17 @@ namespace MehaMath.Math.Components
             return result;
         }
 
+        public static Vector CreateSameValueVector(int length, double value)
+        {
+            var vector = new Vector(length);
+            for (int i = 0; i < vector.Length; i++)
+            {
+                vector[i] = value;
+            }
+
+            return vector;
+        }
+
         public Vector Normalized()
         {
             return this / Magnitude();

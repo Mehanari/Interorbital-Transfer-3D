@@ -1,6 +1,8 @@
 using System;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using MehaMath.Math.Components;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Src.LambertProblem
@@ -8,9 +10,10 @@ namespace Src.LambertProblem
     /// <summary>
     /// The algorithm is based on article "A procedure for the solution of Lambert's orbital boundary-value problem" by Gooding R. H.
     /// </summary>
-    public class GoodingSolver : MonoBehaviour
+    public class GoodingSolver
     {
         private const double TOLERANCE = 1e-11;
+        private const double HALLEY_TOLERANCE = 1e-7; //Tolerance for Halley iterations step.
         private const int MAX_ITERATIONS = 30;
         private const double MAX_X_MODULE = 0.99999;
 
@@ -28,6 +31,7 @@ namespace Src.LambertProblem
         /// Calculates the transfer orbit connecting start to destination in transferTime.
         /// Returns true if a solution is found, false otherwise.
         /// Outputs velocity vectors v1 (at start) and v2 (at destination).
+        /// Also, returns false if orbit is invalid (crushing into central body for example)
         /// </summary>
         public bool CalculateTransfer(Vector start, Vector destination, double transferTime, out Vector v1,
             out Vector v2)
@@ -73,9 +77,7 @@ namespace Src.LambertProblem
             var s_n = s / r1;
             var time_n = transferTime / Math.Sqrt(r1 * r1 * r1 / GravitationalParameter);
             var lambda = Math.Sqrt(r2_n / s_n) * Math.Cos(theta / 2);
-            var aMin = s / 2; //Semi-major axis of minimum-energy orbit
-            var aMin_n = aMin / r1;
-
+            
             //Making initial guesses for x (universal variable)
             //Magic numbers come from Gooding's calculations and correspond to orbits with different energy deviations
             //x1 - elliptical orbit (negative energy deviation)
@@ -98,12 +100,93 @@ namespace Src.LambertProblem
                 Debug.LogWarning("Initial guess may not bracket the solution.");
             }
 
-            //Helley iterations
+            //Halley iterations
             var x = x1;
-            var y = y1;
             var x_new = x;
             var iter = 0;
-            throw new NotImplementedException();
+            while (Math.Abs(LogErr(x, s_n, chord_n, lambda, time_n)) > HALLEY_TOLERANCE && iter < MAX_ITERATIONS)
+            {
+                iter++;
+                var err = LogErr(x, s_n, chord_n, lambda, time_n);
+                var dErr = LogErrPrimeI(x, s_n, chord_n, lambda);
+                var ddErr = LogErrPrimeII(x, s_n, chord_n, lambda);
+                var diff = (2 * dErr * err) / (2 * dErr * dErr - err * ddErr);
+                x_new = x - diff;
+                x = x_new;
+            }
+
+            var eta = (x / Math.Sqrt(1 - x * x)) * Math.Sqrt(s_n); //The eccentric anomaly difference in the universal variable formulation
+            //Lagrange coefficients for calculating the final velocity
+            var f = 1 - (s_n / r1_n) * (1 - Math.Cos(eta));
+            var g = s_n * Math.Sqrt(s_n) * (eta - Math.Sin(eta));
+            var df = (-Math.Sqrt(s_n) / (r1_n * r2_n)) * Math.Sin(eta);
+            var dg = 1 - (s_n / r2_n) * (1 - Math.Cos(eta));
+            
+            //Calculating the velocities
+            v1 = (destination - start * f) / g;
+            v2 = (destination * dg - start) / g;
+            //Converting into physical units
+            v1 *= Math.Sqrt(GravitationalParameter / r1);
+            v2 *= Math.Sqrt(GravitationalParameter / r1);
+            
+            //Checking if the obtained transfer orbit goes through the central body
+            var h = Vector.CrossProduct3D(start, v1); //Specific angular momentum
+            var e = (Vector.CrossProduct3D(v1, h) / GravitationalParameter) - (start / r1); //Eccentricity vector
+            var energy = (v1.MagnitudeSquare() / 2) - GravitationalParameter / r1;
+            var a = -GravitationalParameter / (2 * energy); //Semi-major axis
+            var rp = a * (1 - e.Magnitude()); //Pericenter distance
+            if (rp <= CentralBodyRadius)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Computes the logarithmic error between the time of flight (ttof) obtained from given x and the desired time of flight (desiredTtof).
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="s_n"></param>
+        /// <param name="chord_n"></param>
+        /// <param name="lambda"></param>
+        /// <param name="desiredTtof"></param>
+        /// <returns></returns>
+        private double LogErr(double x, double s_n, double chord_n, double lambda, double desiredTtof)
+        {
+            var ttof = TimeOfFlight(x, s_n, chord_n, lambda);
+            return Math.Log(ttof) - Math.Log(desiredTtof);
+        }
+
+        /// <summary>
+        /// Computes the first derivative of logarithmic time of flight error with respect to x.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="s_n"></param>
+        /// <param name="chord_n"></param>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        private double LogErrPrimeI(double x, double s_n, double chord_n, double lambda)
+        {
+            var ttof = TimeOfFlight(x, s_n, chord_n, lambda);
+            var dttof = TimeOfFlightPrimeI(x, s_n, chord_n, lambda);
+            return dttof / ttof;
+        }
+
+        /// <summary>
+        /// Computes the second derivative of logarithmic time of flight error with respect to x.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="s_n"></param>
+        /// <param name="chord_n"></param>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        private double LogErrPrimeII(double x, double s_n, double chord_n, double lambda)
+        {
+            var ttof = TimeOfFlight(x, s_n, chord_n, lambda);
+            var dttof = TimeOfFlightPrimeI(x, s_n, chord_n, lambda);
+            var ddttof = TimeOfFlightPrimeII(x, s_n, chord_n, lambda);
+            return (ttof*ddttof-dttof*dttof)/(ttof * ttof);
         }
 
         /// <summary>
@@ -148,8 +231,54 @@ namespace Src.LambertProblem
             return (numerator / denominator) + dTrev;
         }
 
+        /// <summary>
+        /// Calculates the second derivative of the time of flight with respect to x.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="s_n"></param>
+        /// <param name="chord_n"></param>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        private double TimeOfFlightPrimeII(double x, double s_n, double chord_n, double lambda)
+        {
+            if (Math.Abs(x) > MAX_X_MODULE) // Near-parabolic case
+                return double.PositiveInfinity;
+
+            var T = this.T(x, s_n, chord_n, lambda);
+            var dT = TPrimeI(x, s_n, lambda);
+            var ddT = TPrimeII(x, s_n, lambda);
+            var denominator = Math.Pow((1 - x * x), 3);
+            var numerator = (x * x - 1) * ((x * x - 1) * ddT - 4 * x * dT) + ((6 * x * x + 2) * T);
+            var ddTrev = TrevPrimeII(x, s_n, Revolutions);
+            return (numerator / denominator) + ddTrev;
+        }
+
         #region Helper functions
 
+        /// <summary>
+        /// Calculates the second derivative of the T component with respect to x.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="s_n"></param>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        private double TPrimeII(double x, double s_n, double lambda)
+        {
+            var q = lambda / Math.Sqrt(s_n);
+            var du = UPrimeI(x, q);
+            var ddu = UPrimeII(x, q);
+            var z = Z(x, s_n, q);
+            var dz = ZPrimeI(x, s_n, q);
+            var ddz = ZPrimeII(x, s_n, q);
+            var dSz = StumpffFunctions.SPrimeI(z);
+            var ddSz = StumpffFunctions.SPrimeII(z);
+
+            var ddT_1 = 2 * q * Math.Sqrt(s_n) * ddu;
+            var ddT_2 = 4 * q * q * s_n * (dz * dz * ddSz + ddz * dSz);
+            var ddT_3 = T3PrimeII(x, s_n, lambda);
+            return ddT_1 + ddT_2 + ddT_3;
+        }
+        
         /// <summary>
         /// Calculates the first derivative of the T component with respect to x.
         /// </summary>
@@ -215,6 +344,52 @@ namespace Src.LambertProblem
         }
 
         /// <summary>
+        /// Calculates the second derivative of the third intermediate term of the normalized time of flight.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="s_n"></param>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        private static double T3PrimeII(double x, double s_n, double lambda)
+        {
+            var q = lambda / Math.Sqrt(s_n);
+            //All the values needed to calculate the ddT3
+            var u = U(x, q);
+            var du = UPrimeI(x, q);
+            var ddu = UPrimeII(x, q);
+            var z = Z(x, s_n, q);
+            var dz = ZPrimeI(x, s_n, q);
+            var ddz = ZPrimeII(x, s_n, q);
+            var Sz = StumpffFunctions.S(z);
+            var dSz = StumpffFunctions.SPrimeI(z);
+            var ddSz = StumpffFunctions.SPrimeII(z);
+            
+            //The ddT3 is calculates as mult*(dA + dB + dC), each term of dA, dB and dC can be represented as sum of sub-terms.
+            //We start with mult.
+            var mult = Math.Sqrt(s_n);
+            //Calculating the dA. 
+            var dA_1 = (x * x - 1) * du * dz * (z * dSz + Sz);
+            var dA_2 = (x * x - 1) * u * ddz * (z * dSz + Sz);
+            var dA_3 = 2 * x * u * dz * (z * dSz + Sz);
+            var dA_4 = (x * x - 1) * u * dz * dz * (z * ddSz + 2 * dSz);
+            var dA = dA_1 + dA_2 + dA_3 + dA_4;
+            
+            //Calculating the dB
+            var dB_1 = (x * x - 1) * du * dz * (z * dSz + Sz);
+            var dB_2 = (x * x - 1) * (z * Sz - 1) * ddu;
+            var dB_3 = 2 * x * (z * Sz - 1) * du;
+            var dB = dB_1 + dB_2 + dB_3;
+            
+            //Calculating the dC
+            var dC_mult = 2;
+            var dC_1 = u * (x * z * dz * dSz + Sz * (x * dz + z) - 1);
+            var dC_2 = x * (z * Sz - 1) * du;
+            var dC = dC_mult * (dC_1 + dC_2);
+
+            return mult * (dA + dB + dC);
+        }
+
+        /// <summary>
         /// Calculates the normalized time of multiple revolutions, if there is any.
         /// N is a number of revolutions.
         /// </summary>
@@ -248,6 +423,7 @@ namespace Src.LambertProblem
         /// <param name="s_n"></param>
         /// <param name="N"></param>
         /// <returns></returns>
+        /// TODO: Check correctness.
         private static double TrevPrimeII(double x, double s_n, int N)
         {
             var a_n = An(x, s_n);

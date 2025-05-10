@@ -95,6 +95,24 @@ namespace MehaMath.Math.Components
         }
 
         /// <summary>
+        /// Returns true if all numbers in the vector satisfy the given predicate.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public bool All(Predicate<double> property)
+        {
+            for (int i = 0; i < Length; i++)
+            {
+                if (!property(_values[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Converts this vector to a Unity Vector2.
         /// If length of this vector is bigger than 2, then remaining values will be lost.
         /// If length of this vector is less than 2, then missing values will be set to zero.

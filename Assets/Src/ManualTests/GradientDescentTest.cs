@@ -1,8 +1,8 @@
 ﻿using System;
 using MehaMath.Math.Components;
-using MehaMath.Math.RootsFinding;
 using MehaMath.VisualisationTools.Plotting;
 using Src.FinalComponents;
+using Src.Helpers;
 using UnityEngine;
 
 namespace Src
@@ -31,40 +31,61 @@ namespace Src
 		private double _minTransferTime = 1000;
 		private double _maxTransferTime = 5000;
 		private int _timePoints = 51;
+		private double _serviceTime = 10d;
+		private double _centralBodyRadius = 6500d; //Earth's radius + very low Earth orbit height
+		private double _crushLambda = 10;
+		private double _fuelCost = 1;
+		private double _timeCost = 2;
 		private SingleTargetCostCalculator _costCalculator;
 
 		private void Start()
 		{
+			var targetInitialOrbit = OrbitHelper.GetOrbit(_v2, _r2, _mu);
+			var targetParameters = new TargetParameters()
+			{
+				InitialOrbit = targetInitialOrbit,
+				ServiceTime = _serviceTime
+			};
+			var shipStartOrbit = OrbitHelper.GetOrbit(_v1, _r1, _mu);
 			_costCalculator = new SingleTargetCostCalculator()
 			{
 				Mu = _mu,
-				g0 = _g0,
-				MDry = _mDry,
-				Isp = _isp,
-				SpacecraftInitPos = _r1,
-				SpacecraftInitVel = _v1,
-				SatelliteInitPos = _r2,
-				SatelliteInitVel = _v2,
-				TimePrice = 1
+				Target = targetParameters,
+				StartOrbit = shipStartOrbit,
+				CentralBodyRadius = _centralBodyRadius
 			};
-			var initialGuess = new Vector(1000d, 1000d);
+			var initialGuess = new Vector(3000d, 10000d);
 			var min = Minimize(Objective, initialGuess, iterationsLimit: 2000);
 			Debug.Log("Min: " + min);
-			Debug.Log("Cost: " + _costCalculator.CalculateCost(min[0], min[1]));
+			Debug.Log("Cost: " + Objective(min));
 		}
 
 		public double Objective(Vector times)
 		{
 			var driftTime = times[0];
 			var transferTime = times[1];
-			var penalty = 0d;
+			var negativeDriftPenalty = 0d;
 			if (driftTime < 0)
 			{
-				penalty += driftTime * driftTime;
+				negativeDriftPenalty += driftTime * driftTime;
 				driftTime = 0d;
 			}
-			var cost = _costCalculator.CalculateCost(driftTime, transferTime);
-			return cost + penalty;
+			var costParameters = _costCalculator.CalculateCost(driftTime, transferTime);
+			
+			//Calculating needed fuel mass
+			var deltaVTotalMs = costParameters.TotalVelocityDelta * 1000;
+			var mMin = _mDry * (Math.Exp(deltaVTotalMs / (_isp * _g0)) - 1);
+			var surplus = mMin * 0.2;
+			var mTotal = mMin + surplus;
+			var fuelCost = mTotal * _fuelCost;
+			
+			//Calculating crush
+			var crushPenalty = costParameters.CentralBodyIntersection * costParameters.CentralBodyIntersection * _crushLambda;
+			
+			//Calculating time cost
+			var timeCost = costParameters.TotalTime * _timeCost; 
+			
+			return fuelCost + crushPenalty + timeCost + negativeDriftPenalty;
 		}
 
 		private Vector Minimize(Func<Vector, 
@@ -118,28 +139,6 @@ namespace Src
 			var backward = objective(x - h);
 			var derivative = (forward - backward)/(2*h);
 			return derivative;
-		}
-
-		private void Plot()
-		{
-			var costsScaled = new float[_timePoints, _timePoints];
-			var timeStepDrift = (_maxDriftTime - _minDriftTime) / (_timePoints - 1);
-			var timeStepTrans = (_maxTransferTime - _minTransferTime) / (_timePoints - 1);
-			var costCalculator = _costCalculator;
-			for (int driftInd = 0; driftInd < _timePoints; driftInd++)
-			{
-				for (int transInd = 0; transInd < _timePoints; transInd++)
-				{
-					var driftTime = _minDriftTime + driftInd * timeStepDrift;
-					var transferTime = _minTransferTime + transInd * timeStepTrans;
-					var cost = costCalculator.CalculateCost(driftTime, transferTime);
-					costsScaled[driftInd, transInd] = (float)cost * scale.z;
-				}
-			}
-
-			var driftIntervalScaled = (float)(_maxDriftTime - _minDriftTime) * scale.x;
-			var transferIntervalScaled = (float)(_maxTransferTime - _minTransferTime) * scale.y;
-			plotter.PlotDots(0, transferIntervalScaled, costsScaled, "Cost", Color.yellow, dotSize: 0.005f);
 		}
 	}
 }

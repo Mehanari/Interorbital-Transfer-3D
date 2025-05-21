@@ -10,5 +10,15 @@
 		/// We need it to calculate penalties.
 		/// </summary>
 		public double CentralBodyIntersection { get; set; }
+
+		public static CostParameters operator +(CostParameters a, CostParameters b)
+		{
+			return new CostParameters()
+			{
+				CentralBodyIntersection = a.CentralBodyIntersection + b.CentralBodyIntersection,
+				TotalTime = a.TotalTime + b.TotalTime,
+				TotalVelocityDelta = a.TotalVelocityDelta + b.TotalVelocityDelta
+			};
+		}
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using MehaMath.Math.Components;
 using Src.Helpers;
-using Src.LambertProblem;
 
 namespace Src.FinalComponents
 {
@@ -11,50 +10,25 @@ namespace Src.FinalComponents
 		/// Gravitational parameter
 		/// </summary>
 		public double Mu { get; set; } = 398600.4418d;
+		public double CentralBodyRadius { get; set; }
+		
+		public TargetParameters Target { get; set; }
+		public Orbit StartOrbit { get; set; }
 		/// <summary>
-		/// Standard gravitational acceleration
+		/// This parameter needed to update target's position for the cases when given Target object represents the state of the target in the past.
+		/// This parameter DOES NOT affect the StartOrbit, all calculations are made with assumption that StartOrbit corresponds to the spacecraft's state after WaitTime.
 		/// </summary>
-		public double g0 { get; set; } = 9.80665;
-		/// <summary>
-		/// Mass of the spacecraft without fuel
-		/// </summary>
-		public double MDry { get; set; } = 100; 
-		/// <summary>
-		/// Engine specific impulse
-		/// </summary>
-		public double Isp { get; set; } = 300;
-
-		/// <summary>
-		/// Price of fuel per unit
-		/// </summary>
-		public double FuelPrice { get; set; } = 1d;
-		/// <summary>
-		/// Price of time per unit
-		/// </summary>
-		public double TimePrice { get; set; } = 1d;
-		/// <summary>
-		/// How much more fuel we need compared to the ideal case (instantaneous burns).
-		/// </summary>
-		public double FuelSurplus { get; set; } = 0.2;
-
-		/// <summary>
-		/// For the case if the spacecraft velocity in km/s and you need to convert to m/s to calculate fuel.
-		/// </summary>
-		public double DeltaVRatio { get; set; } = 1000;
-		public Vector SpacecraftInitPos { get; set; }
-		public Vector SpacecraftInitVel { get; set; }
-		public Vector SatelliteInitPos { get; set; }
-		public Vector SatelliteInitVel { get; set; }
+		public double WaitTime { get; set; }
 
 		
 
-		public double CalculateCost(double driftTime, double transferTime)
+		public CostParameters CalculateCost(double driftTime, double transferTime)
 		{
 			return CalculateCostWithOrbit(driftTime, transferTime).cost;
 		}
 
 
-		public (double cost, Orbit transfer) CalculateCostWithOrbit(double driftTime, double transferTime)
+		public (CostParameters cost, Orbit transfer) CalculateCostWithOrbit(double driftTime, double transferTime)
 		{
 			if (transferTime <= 0)
 			{
@@ -65,8 +39,8 @@ namespace Src.FinalComponents
 				throw new ArgumentException("Drift time must be non-negative");
 			}
 
-			var spacecraftInitialOrbit = OrbitHelper.GetOrbit(SpacecraftInitVel, SpacecraftInitPos, Mu);
-			var satelliteInitialOrbit = OrbitHelper.GetOrbit(SatelliteInitVel, SatelliteInitPos, Mu);
+			var spacecraftStartOrbit = StartOrbit;
+			var satelliteInitialOrbit = Target.InitialOrbit;
 			
 			var keplerianPropagation = new KeplerianPropagation()
 			{
@@ -74,8 +48,8 @@ namespace Src.FinalComponents
 				GravitationalParameter = Mu
 			};
 
-			var startOrbit = keplerianPropagation.PropagateState(spacecraftInitialOrbit, driftTime);
-			var endOrbit = keplerianPropagation.PropagateState(satelliteInitialOrbit, driftTime + transferTime);
+			var startOrbit = keplerianPropagation.PropagateState(spacecraftStartOrbit, driftTime);
+			var endOrbit = keplerianPropagation.PropagateState(satelliteInitialOrbit, driftTime + transferTime + WaitTime);
 
 			var (startPos, startVel) = OrbitHelper.GetPositionAndVelocity(startOrbit, Mu);
 			var (endPos, endVel) = OrbitHelper.GetPositionAndVelocity(endOrbit, Mu);
@@ -83,18 +57,33 @@ namespace Src.FinalComponents
 			var (vt1, vt2) = Gooding1990.FindTransfer(Mu, startPos, endPos, transferTime);
 			var transferOrbit = OrbitHelper.GetOrbit(vt1, startPos, Mu);
 			
-			//Calculating the cost
+			//Calculating the delta V
 			var deltaVStart = startVel - vt1;
 			var deltaVEnd = endVel - vt2;
 			var totalDeltaV = deltaVEnd.Magnitude() + deltaVStart.Magnitude();
-			//Lower bound of required fuel mass
-			var mMin = MDry * (Math.Exp(totalDeltaV*DeltaVRatio / (Isp * g0)) - 1);
 
-			var surplus = mMin * FuelSurplus;
-			var mRequired = mMin + surplus;
-			var cost = mRequired * FuelPrice + (driftTime + transferTime) * TimePrice;
-			return (cost, transferOrbit);
+			//Calculating the time (simple)
+			var neededTime = driftTime + transferTime + Target.ServiceTime;
+			
+			//Calculating the central body intersection
+			var startTrueAnomaly = transferOrbit.TrueAnomaly;
+			var endTransferOrbit = OrbitHelper.GetOrbit(vt2, endPos, Mu);
+			var endTrueAnomaly = endTransferOrbit.TrueAnomaly;
+			var minCentralBodyDistance =
+				CentralBodyDistanceCalculator.MinDistanceForSection(transferOrbit, startTrueAnomaly, endTrueAnomaly);
+			var centralBodyIntersection = CentralBodyRadius - minCentralBodyDistance;
+			if (centralBodyIntersection < 0)
+			{
+				centralBodyIntersection = 0d;
+			}
+
+			var costParameters = new CostParameters()
+			{
+				CentralBodyIntersection = centralBodyIntersection,
+				TotalTime = neededTime,
+				TotalVelocityDelta = totalDeltaV
+			};
+			return (costParameters, transferOrbit);
 		}
-
 	}
 }

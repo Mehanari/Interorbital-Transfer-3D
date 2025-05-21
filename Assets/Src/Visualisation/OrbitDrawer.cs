@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MehaMath.Math.Components;
+using Src.FinalComponents;
 using Src.Model;
 using UnityEngine;
 
@@ -95,7 +96,7 @@ namespace Src.Visualisation
 			var values = new float[samplesCount];
 			var start = 0f;
 			var end = Mathf.PI * 2;
-			var step = (end - start) / samplesCount;
+			var step = (end - start) / (samplesCount - 1);
 			for (int i = 0; i < samplesCount; i++)
 			{
 				values[i] = start + step * i;

@@ -1,8 +1,7 @@
 ﻿using System;
 using MehaMath.Math.Components;
-using Src.Model;
 
-namespace Src
+namespace Src.FinalComponents
 {
 	public class KeplerianPropagation
 	{

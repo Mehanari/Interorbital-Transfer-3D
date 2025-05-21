@@ -14,6 +14,23 @@ namespace Src.Visualisation
         private const float DEFAULT_STEM_LENGTH = 2;
         private readonly Vector3 DEFAULT_DIRECTION = Vector3.up;
         private readonly Vector3 REFERENCE_EULER = new Vector3(90, 0, 0);
+
+        public void SetLength(float newLength)
+        {
+            if (newLength < 0)
+            {
+                newLength = 0;
+            }
+
+            length = newLength;
+            UpdateLength();
+        }
+
+        public void SetDirection(Vector3 newDirection)
+        {
+            direction = newDirection;
+            UpdateRotation();
+        }
         
         private void OnValidate()
         {

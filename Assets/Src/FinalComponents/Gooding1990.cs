@@ -1,7 +1,7 @@
 using System;
 using MehaMath.Math.Components;
 
-namespace Src.LambertProblem
+namespace Src.FinalComponents
 {
     /// <summary>
     /// This is a C# translation of gooding1990 implementation from: https://github.com/jorgepiloto/lamberthub/blob/main/src/lamberthub/universal_solvers/gooding.py

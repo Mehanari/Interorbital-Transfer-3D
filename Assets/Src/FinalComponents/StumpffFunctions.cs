@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Src.LambertProblem
+namespace Src.FinalComponents
 {
 	public static class StumpffFunctions
 	{

@@ -2,10 +2,8 @@
 using MehaMath.Math.Components;
 using Src.Helpers;
 using Src.LambertProblem;
-using Src.Model;
-using Src.SpacecraftDynamics.CentralBodyDynamics;
 
-namespace Src
+namespace Src.FinalComponents
 {
 	public class SingleTargetCostCalculator
 	{

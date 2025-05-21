@@ -2,6 +2,7 @@
 using MehaMath.Math.Components;
 using MehaMath.Math.RootsFinding;
 using MehaMath.VisualisationTools.Plotting;
+using Src.FinalComponents;
 using UnityEngine;
 
 namespace Src

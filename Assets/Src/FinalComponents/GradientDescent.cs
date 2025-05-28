@@ -5,31 +5,76 @@ namespace Src.FinalComponents
 {
 	public static class GradientDescent
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="objective"></param>
+		/// <param name="initialGuess"></param>
+		/// <param name="initialStepSize"></param>
+		/// <param name="tolerance"></param>
+		/// <param name="iterationsLimit"></param>
+		/// <param name="projection">Functions that clamps the input vector into a feasible region</param>
+		/// <returns></returns>
 		public static Vector Minimize(Func<Vector, 
-				double> objective, Vector initialGuess, double stepSize = 0.1d,
-			double tolerance = 0.1d, int iterationsLimit = 1000)
+				double> objective, Vector initialGuess, double initialStepSize = 0.1d,
+			double tolerance = 0.1d, int iterationsLimit = 1000, Func<Vector, Vector> projection = null, bool useLineSearch = true)
 		{
 			var change = double.MaxValue; //When the change is low we stop the algorithm
 			var iteration = 0;
 			var x = initialGuess;
-			while (iteration < iterationsLimit || change > tolerance)
+			var stepSize = initialStepSize;
+			var currentCost =  objective(x);
+			while (iteration < iterationsLimit && change > tolerance)
 			{
 				iteration++;
 				var gradient = Gradient(objective, x);
-				var oldCost = objective(x);
+				if (useLineSearch)
+				{
+					stepSize = ArmijoLineSearch(objective, x, gradient, projection);
+				}
+				
 				x = x - gradient*stepSize;
 				//Applying projection
-				var projectedX = new Vector(x.Length);
-				for (int i = 0; i < projectedX.Length; i++)
+				if (projection is not null)
 				{
-					projectedX[i] = Math.Max(x[i], 0);
+					x = projection(x);
 				}
-				x = projectedX;
 				var newCost = objective(x);
-				change = Math.Abs(oldCost - newCost);
+				change = Math.Abs(currentCost - newCost);
+				currentCost = newCost;
 			}
 
 			return x;
+		}
+		
+		// Armijo Line Search (Backtracking)
+		// The step size choosing algorithm from "Numerical Optimization" by J. Nocedal and S. Wright. Chapter 3. 
+		private static double ArmijoLineSearch(Func<Vector, double> objective, Vector x, 
+			Vector gradient, Func<Vector, Vector> projection = null, double c1 = 1e-4, 
+			double rho = 0.5, double maxStepSize = 1.0)
+		{
+			var stepSize = maxStepSize;
+			var currentValue = objective(x);
+			var gradientNormSquared = Vector.DotProduct(gradient, gradient);
+        
+			while (stepSize > 1e-10)
+			{
+				var newX = x - gradient * stepSize;
+				if (projection != null)
+					newX = projection(newX);
+                
+				var newValue = objective(newX);
+            
+				// Armijo condition
+				if (newValue <= currentValue - c1 * stepSize * gradientNormSquared)
+				{
+					return stepSize;
+				}
+            
+				stepSize *= rho; // Reduce step size
+			}
+        
+			return stepSize;
 		}
 
 		private static Vector Gradient(Func<Vector, double> objective, Vector x, double h = 1e-5)

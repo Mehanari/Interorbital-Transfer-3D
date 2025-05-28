@@ -36,7 +36,7 @@ namespace Src
 		private double _crushLambda = 10;
 		private double _fuelCost = 1;
 		private double _timeCost = 2;
-		private SingleTargetCostCalculator _costCalculator;
+		private SingleTargetProcessor _processor;
 
 		private void Start()
 		{
@@ -47,7 +47,7 @@ namespace Src
 				ServiceTime = _serviceTime
 			};
 			var shipStartOrbit = OrbitHelper.GetOrbit(_v1, _r1, _mu);
-			_costCalculator = new SingleTargetCostCalculator()
+			_processor = new SingleTargetProcessor()
 			{
 				Mu = _mu,
 				Target = targetParameters,
@@ -70,7 +70,7 @@ namespace Src
 				negativeDriftPenalty += driftTime * driftTime;
 				driftTime = 0d;
 			}
-			var costParameters = _costCalculator.CalculateCost(driftTime, transferTime);
+			var costParameters = _processor.CalculateCost(driftTime, transferTime);
 			
 			//Calculating needed fuel mass
 			var deltaVTotalMs = costParameters.TotalVelocityDelta * 1000;

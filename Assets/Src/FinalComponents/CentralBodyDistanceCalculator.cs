@@ -1,4 +1,5 @@
 ﻿using System;
+using MehaMath.Math.Components;
 
 namespace Src.FinalComponents
 {
@@ -10,35 +11,32 @@ namespace Src.FinalComponents
 		/// <summary>
 		/// Given start and end true anomaly values, and a 'shortPath' flag indicating the section,
 		/// calculates the minimum distance connecting the central body center and the given orbit section.
-		/// It is assumed that the motion of an object corresponds to the increase of true anomaly, hence
-		/// the chosen segment of an ellipse will correspond to the trajectory created by gradually increasing start true anomaly
-		/// up until it becomes equal to end true anomaly.
 		/// </summary>
 		/// <param name="orbit"></param>
-		/// <param name="start">Must be in the interval [0, 2*Pi)</param>
-		/// <param name="end">Must be in the interval [0, 2*Pi)</param>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
 		/// <param name="shortPath"></param>
 		/// <param name="mu">Gravitational parameter</param>
 		/// <returns></returns>
 		public static double MinDistanceForSection(Orbit orbit, double start, double end)
 		{
-			if (start < 0 || start >= Math.PI*2)
-			{
-				throw new ArgumentException("Start true anomaly must be in range [0, 2*Pi). Given value: " + start);
-			}
-			if (end < 0 || end >= Math.PI*2)
-			{
-				throw new ArgumentException("End true anomaly must be in range [0, 2*Pi). Given value: " + end);
-			}
-			
-
-			if (start > end)
-			{
-				//Is start > end, then we go through 0, which is the periapsis - the closest point to the central body.
-				return DistanceToCentralBody(0, orbit);
-			}
 			var startDistance = DistanceToCentralBody(start, orbit);
 			var endDistance = DistanceToCentralBody(end, orbit);
+			var periapsisDistance = DistanceToCentralBody(0, orbit);
+			//If the signs of start and end true anomalies are different, then boyd goes through 0 true anomaly, which means it goes through the periapsis
+			if (start*end < 0)
+			{
+				return periapsisDistance;
+			}
+
+			var angularDistance = Math.Abs(start - end);
+			//If the signs of both start and end true anomalies are the same, but
+			//angular distance is bigger than the full circle, than the body goes through the periapsis
+			if (angularDistance >= Math.PI*2)
+			{
+				return periapsisDistance;
+			}
+			
 			return startDistance < endDistance ? startDistance : endDistance;
 		}
 

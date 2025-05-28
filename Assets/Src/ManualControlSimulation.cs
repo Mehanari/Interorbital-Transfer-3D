@@ -8,6 +8,7 @@ using Src.SpacecraftDynamics.CentralBodyDynamics;
 using Src.Visualisation;
 using UnityEngine;
 using UnityEngine.UI;
+using Input = UnityEngine.Input;
 
 namespace Src
 {

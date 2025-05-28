@@ -18,7 +18,7 @@ namespace Src.FinalComponents
 				throw new ArgumentException(
 					"Drift times array length and transfer times array length must be equal to targets list length.");
 			}
-			var singleTargetCostCalculator = new SingleTargetCostCalculator()
+			var singleTargetCostCalculator = new SingleTargetProcessor()
 			{
 				Mu = this.Mu,
 				CentralBodyRadius = this.CentralBodyRadius

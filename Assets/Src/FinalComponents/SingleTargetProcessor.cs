@@ -4,7 +4,7 @@ using Src.Helpers;
 
 namespace Src.FinalComponents
 {
-	public class SingleTargetCostCalculator
+	public class SingleTargetProcessor
 	{
 		/// <summary>
 		/// Gravitational parameter
@@ -26,7 +26,6 @@ namespace Src.FinalComponents
 		{
 			return CalculateCostWithOrbit(driftTime, transferTime).cost;
 		}
-
 
 		public (CostParameters cost, Orbit transfer) CalculateCostWithOrbit(double driftTime, double transferTime)
 		{

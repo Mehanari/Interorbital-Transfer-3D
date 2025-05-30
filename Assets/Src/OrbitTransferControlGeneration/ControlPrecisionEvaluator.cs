@@ -1,8 +1,8 @@
 ﻿using System;
 using MehaMath.Math.Components;
-using Src.FinalComponents;
 using Src.Helpers;
 using Src.Model;
+using Src.OptimizationFramework;
 using Src.SpacecraftDynamics;
 
 namespace Src.OrbitTransferControlGeneration

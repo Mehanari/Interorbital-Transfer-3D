@@ -1,9 +1,6 @@
 using System;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using MehaMath.Math.Components;
-using Src.FinalComponents;
-using Unity.Mathematics;
+using Src.OptimizationFramework;
 using UnityEngine;
 
 namespace Src.LambertProblem

@@ -10,7 +10,7 @@ public static class PermutationGenerator
     public static int[,] GeneratePermutations(int n)
     {
         if (n < 0)
-            throw new ArgumentException("Input must be a non-negative integer.", nameof(n));
+            throw new ArgumentException("MissionParameters must be a non-negative integer.", nameof(n));
 
         // Calculate factorial for the size of the result array
         int factorial = 1;

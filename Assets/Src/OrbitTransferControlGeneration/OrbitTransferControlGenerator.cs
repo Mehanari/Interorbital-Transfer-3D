@@ -1,5 +1,5 @@
-﻿using Src.FinalComponents;
-using Src.Model;
+﻿using Src.Model;
+using Src.OptimizationFramework;
 
 namespace Src.OrbitTransferControlGeneration
 {

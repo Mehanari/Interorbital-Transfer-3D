@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using MehaMath.Math.Components;
-using Src.FinalComponents;
 using Src.Model;
+using Src.OptimizationFramework;
 using UnityEngine;
 
 namespace Src.Visualisation

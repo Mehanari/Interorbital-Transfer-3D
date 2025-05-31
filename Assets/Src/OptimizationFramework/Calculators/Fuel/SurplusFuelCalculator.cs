@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Src.OptimizationFramework.Calculators
+namespace Src.OptimizationFramework.Calculators.Fuel
 {
-	public class FuelCalculator
+	public class SurplusFuelCalculator : FuelCalculator
 	{
 		public double Isp { get; set; }
 		/// <summary>
@@ -10,14 +10,8 @@ namespace Src.OptimizationFramework.Calculators
 		/// </summary>
 		public double StandardGrav { get; set; }
 		public double Surplus { get; set; }
-
-
-		public FuelCalculator(double isp, double standardGrav, double surplus)
-		{
-			Isp = isp;
-			StandardGrav = standardGrav;
-			Surplus = surplus;
-		}
+		public double ShipFinalMass { get; set; }
+		
 
 		/// <summary>
 		/// 
@@ -25,10 +19,10 @@ namespace Src.OptimizationFramework.Calculators
 		/// <param name="transfersKinematics">Must be in a chronological order</param>
 		/// <param name="spacecraftFinalMass">How much should spacecraft weight after all transfers</param>
 		/// <returns></returns>
-		public double[] CalculateFuelMasses(KinematicData[] transfersKinematics, double spacecraftFinalMass)
+		public override double[] CalculateFuelMasses(KinematicData[] transfersKinematics)
 		{
 			var fuelMasses = new double[transfersKinematics.Length];
-			var currentFinalMass = spacecraftFinalMass;
+			var currentFinalMass = ShipFinalMass;
 			//Starting with the last transfer
 			for (int i = transfersKinematics.Length-1; i >= 0; i--)
 			{

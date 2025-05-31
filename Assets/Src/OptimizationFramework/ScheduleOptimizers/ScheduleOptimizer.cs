@@ -1,4 +1,4 @@
-﻿using Src.OptimizationFramework.Calculators;
+﻿using Src.OptimizationFramework.Calculators.Cost;
 
 namespace Src.OptimizationFramework.ScheduleOptimizers
 {
@@ -6,11 +6,8 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 	{
 		protected double MinTransferTime { get; set; } = 1d;
 		
-		public (double[] DriftTimes, double[] TransferTimes) InitialGuess { get; set; }
-		
-		public abstract (double[] driftTimes, double[] transferTimes) OptimizeSchedule(TargetParameters[] targets, Orbit spacecraftInitialOrbit, double spacecraftFinalMass);
+		public abstract (double[] driftTimes, double[] transferTimes) OptimizeSchedule(TargetParameters[] targets, Orbit spacecraftInitialOrbit);
 		
 		public CostCalculator CostCalculator { get; set; }
-		public KinematicCalculator KinematicCalculator { get; set; }
 	}
 }

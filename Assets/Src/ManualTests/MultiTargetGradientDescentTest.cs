@@ -1,9 +1,9 @@
-﻿using System;
-using MehaMath.Math.Components;
-using Src.Helpers;
+﻿using MehaMath.Math.Components.Json;
+using Newtonsoft.Json;
 using Src.OptimizationFramework;
 using Src.OptimizationFramework.Calculators;
-using Src.OptimizationFramework.MathComponents;
+using Src.OptimizationFramework.Calculators.Cost;
+using Src.OptimizationFramework.Calculators.Fuel;
 using Src.OptimizationFramework.MissionOptimization;
 using Src.OptimizationFramework.ScheduleOptimizers;
 using UnityEngine;
@@ -73,8 +73,11 @@ namespace Src.ManualTests
 		private void Start()
 		{
 			var kinematicsCalculator = new KinematicCalculator(_mu);
-			var fuelCalculator = new FuelCalculator(_isp, _g0, _fuelSurplus);
-			var costCalculator = new CostCalculator(fuelCalculator, _mu, _centralBodyRadius, _fuelCost, _timeCost);
+			var fuelCalculator = new SurplusFuelCalculator(){Surplus = 0.2};
+			var costCalculator = new WeightedCostCalculator()
+			{
+				FuelCalculator = fuelCalculator
+			};
 
 			var initialGuessOptimizer = InitializeGridDescentOptimizer();
 			var mainOptimizer = InitializeOptimizer();
@@ -82,6 +85,11 @@ namespace Src.ManualTests
 			var missionOptimizer = new TwoPhasedMissionOptimizer(initialGuessOptimizer, mainOptimizer, fuelCalculator,
 				kinematicsCalculator, costCalculator);
 
+			var jsonIo = new JsonIO<MissionParameters>()
+			{
+				FileName = "missionParameters.json",
+				Converters = new JsonConverter[] { new VectorJsonConverter()}
+			};
 			var missionParameters = new MissionParameters()
 			{
 				CentralBodyRadius = _centralBodyRadius,
@@ -92,11 +100,13 @@ namespace Src.ManualTests
 				ShipInitialOrbit = _spacecraftInitialOrbit,
 				Targets = GetTargets(),
 				StandGrav = _g0,
-				TimeCost = _timeCost
+				TimeCost = 0
 			};
+			jsonIo.Save(missionParameters);
 
+			
 			var result = missionOptimizer.Optimize(missionParameters);
-			Debug.Log("Mission cost: " + result);
+			Debug.Log("Mission cost: " + result.TotalCost);
 		}
 		
 
@@ -112,39 +122,30 @@ namespace Src.ManualTests
 				{
 					TargetName = targetName,
 					ServiceTime = serviceTime,
-					InitialOrbit = _targetsOrbits[i]
+					Orbit = _targetsOrbits[i]
 				};
 			}
 
 			return targets;
 		}
 
-		private GlobalScheduleOptimizer InitializeOptimizer()
+		private GradientDescentScheduleOptimizer InitializeOptimizer()
 		{
 			var kinematicsCalculator = new KinematicCalculator(_mu);
-			var fuelCalculator = new FuelCalculator(_isp, _g0, _fuelSurplus);
-			var costCalculator = new CostCalculator(fuelCalculator, _mu, _centralBodyRadius, _fuelCost, _timeCost);
-			var scheduleOptimizer = new GlobalScheduleOptimizer(costCalculator, kinematicsCalculator);
+			var fuelCalculator = new SurplusFuelCalculator(){Surplus = 0.2};
+			var costCalculator = new WeightedCostCalculator();
+			var scheduleOptimizer = new GradientDescentScheduleOptimizer(costCalculator, kinematicsCalculator);
 			scheduleOptimizer.GdIterationsLimit = 10000;
 			return scheduleOptimizer;
 		}
-
-		private SequentialScheduleOptimizer InitializeSequentialOptimizer()
-		{
-			var kinematicsCalculator = new KinematicCalculator(_mu);
-			var fuelCalculator = new FuelCalculator(_isp, _g0, _fuelSurplus);
-			var costCalculator = new CostCalculator(fuelCalculator, _mu, _centralBodyRadius, _fuelCost, _timeCost);
-			var optimizer = new SequentialScheduleOptimizer(costCalculator, kinematicsCalculator, _mu);
-			optimizer.GdIterationsLimit = 10000;
-			return optimizer;
-		}
+		
 
 		private GridDescentSequentialOptimizer InitializeGridDescentOptimizer()
 		{
 			var kinematicsCalculator = new KinematicCalculator(_mu);
-			var fuelCalculator = new FuelCalculator(_isp, _g0, _fuelSurplus);
-			var costCalculator = new CostCalculator(fuelCalculator, _mu, _centralBodyRadius, _fuelCost, _timeCost);
-			var optimizer = new GridDescentSequentialOptimizer(costCalculator, kinematicsCalculator, _mu)
+			var fuelCalculator = new SurplusFuelCalculator(){Surplus = 0.2};
+			var costCalculator = new WeightedCostCalculator();
+			var optimizer = new GridDescentSequentialOptimizer()
 			{
 				MinDriftTime = 1000,
 				MaxDriftTime = 20000,

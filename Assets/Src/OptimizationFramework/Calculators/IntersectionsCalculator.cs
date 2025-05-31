@@ -3,13 +3,16 @@ using Src.Helpers;
 
 namespace Src.OptimizationFramework.Calculators
 {
-	public static class IntersectionsCalculator
+	public class IntersectionsCalculator
 	{
-		public static double[] CalculateIntersections(KinematicData[] transfers, double mu, double centralBodyRadius)
+		public double Mu { get; set; }
+		public double CentralBodyRadius { get; set; }
+		
+		public double[] CalculateIntersections(KinematicData[] transfers)
 		{
 			var keplerianPropagation = new KeplerianPropagation()
 			{
-				GravitationalParameter = mu,
+				GravitationalParameter = Mu,
 				CentralBodyPosition = new Vector(0, 0, 0)
 			};
 
@@ -18,7 +21,7 @@ namespace Src.OptimizationFramework.Calculators
 			{
 				var transfer = transfers[i];
 				var transferOrbitStart = OrbitHelper.GetOrbit(transfer.TransferStartVelocity,
-					transfer.TransferStartPosition, mu);
+					transfer.TransferStartPosition, Mu);
 				var transferOrbitEnd =
 					keplerianPropagation.PropagateState(transferOrbitStart, transfer.TransferTime);
 				var startTrueAnomaly = transferOrbitStart.TrueAnomaly;
@@ -27,7 +30,7 @@ namespace Src.OptimizationFramework.Calculators
 					CentralBodyDistanceCalculator.MinDistanceForSection(transferOrbitStart, startTrueAnomaly,
 						endTrueAnomaly);
 				//If distance to the central body center is bigger than central body radius, then there is no intersection.
-				intersections[i] = distance > centralBodyRadius ? 0 : centralBodyRadius - distance;
+				intersections[i] = distance > CentralBodyRadius ? 0 : CentralBodyRadius - distance;
 			}
 
 			return intersections;

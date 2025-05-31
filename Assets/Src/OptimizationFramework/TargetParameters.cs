@@ -6,8 +6,8 @@ namespace Src.OptimizationFramework
 	{
 		[JsonProperty("target_name")] 
 		public string TargetName { get; set; }
-		[JsonProperty("initial_orbit")]
-		public Orbit InitialOrbit { get; set; }
+		[JsonProperty("orbit")]
+		public Orbit Orbit { get; set; }
 		[JsonProperty("service_time")]
 		public double ServiceTime { get; set; }
 	}

@@ -77,7 +77,7 @@ namespace Src.OptimizationFramework.Calculators
 			var (driftEndPos, driftEndVel) = OrbitHelper.GetPositionAndVelocity(driftEndOrbit, Mu);
 			//Where do we need to meet the target?
 			var rendezvousOrbit =
-				keplerianPropagation.PropagateState(target.InitialOrbit, driftTime + transferTime + waitTime);
+				keplerianPropagation.PropagateState(target.Orbit, driftTime + transferTime + waitTime);
 			var (rendezvousPos, rendezvousVel) = OrbitHelper.GetPositionAndVelocity(rendezvousOrbit, Mu);
 			//How to get from driftEndPos (transfer start position) to rendezvousPos in a given transfer time?
 			var (transferStartVel, transferEndVel) = FindCheapestTransfer(driftEndPos, driftEndVel, rendezvousPos, rendezvousVel, transferTime);

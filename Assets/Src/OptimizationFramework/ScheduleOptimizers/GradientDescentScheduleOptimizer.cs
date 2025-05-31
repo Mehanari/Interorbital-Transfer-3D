@@ -1,11 +1,12 @@
 ﻿using System;
 using MehaMath.Math.Components;
 using Src.OptimizationFramework.Calculators;
+using Src.OptimizationFramework.Calculators.Cost;
 using Src.OptimizationFramework.MathComponents;
 
 namespace Src.OptimizationFramework.ScheduleOptimizers
 {
-	public class GlobalScheduleOptimizer : ScheduleOptimizer
+	public class GradientDescentScheduleOptimizer : ScheduleOptimizer
 	{
 		/// <summary>
 		/// Step size of the gradient descent.
@@ -23,9 +24,9 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 		/// </summary>
 		public double GdTolerance { get; set; } = 0.1d;
 		
-		
+		public (double[] DriftTimes, double[] TransferTimes) InitialGuess { get; set; }
 
-		public GlobalScheduleOptimizer(CostCalculator costCalculator, KinematicCalculator kinematicCalculator)
+		public GradientDescentScheduleOptimizer(WeightedCostCalculator weightedCostCalculator, KinematicCalculator kinematicCalculator)
 		{
 		}
 		
@@ -39,7 +40,7 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 		/// <param name="spacecraftFinalMass">How much the spacecraft must weight after servicing all targets</param>
 		/// <returns></returns>
 		public override (double[] driftTimes, double[] transferTimes) OptimizeSchedule(
-			TargetParameters[] targets, Orbit spacecraftInitialOrbit, double spacecraftFinalMass)
+			TargetParameters[] targets, Orbit spacecraftInitialOrbit)
 		{
 			if (InitialGuess.DriftTimes.Length != InitialGuess.TransferTimes.Length)
 			{
@@ -81,10 +82,7 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 					}
 				}
 
-				var kinematics =
-					KinematicCalculator.CalculateKinematics(driftTimes, transferTimes, targets,
-						spacecraftInitialOrbit);
-				var cost = CostCalculator.CalculateCost(kinematics, spacecraftFinalMass);
+				var cost = CostCalculator.CalculateCost(driftTimes, transferTimes, targets, spacecraftInitialOrbit);
 				return cost + negativeTimes * negativeTimes;
 			}
 		}

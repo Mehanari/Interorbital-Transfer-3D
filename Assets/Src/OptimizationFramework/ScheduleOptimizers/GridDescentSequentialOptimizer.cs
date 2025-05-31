@@ -2,6 +2,7 @@
 using MehaMath.Math.Components;
 using Src.Helpers;
 using Src.OptimizationFramework.Calculators;
+using Src.OptimizationFramework.Calculators.Cost;
 using Src.OptimizationFramework.MathComponents;
 
 namespace Src.OptimizationFramework.ScheduleOptimizers
@@ -30,27 +31,29 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 		public double MaxDriftTime { get; set; }
 		public int PointsPerDimension { get; set; }
 		public double CostToDifference { get; set; } = 0.99d;
-
-		private readonly double _mu;
 		
-		public GridDescentSequentialOptimizer(CostCalculator costCalculator, KinematicCalculator kinematicCalculator, double mu)
-		{
-			_mu = mu;
-		}
+		public KinematicCalculator KinematicCalculator { get; set; }
 
-		public override (double[] driftTimes, double[] transferTimes) OptimizeSchedule(TargetParameters[] targets, Orbit spacecraftInitialOrbit,
-			double spacecraftFinalMass)
+		public double Mu { get; set; }
+		
+
+		public override (double[] driftTimes, double[] transferTimes) OptimizeSchedule(TargetParameters[] targets, Orbit spacecraftInitialOrbit)
 		{
 			var driftTimes = new double[targets.Length];
 			var transferTimes = new double[targets.Length];
-            
+			var keplerianPropagation = new KeplerianPropagation()
+			{
+				CentralBodyPosition = new Vector(0, 0, 0),
+				GravitationalParameter = Mu
+			};
+			
 			var elapsedTime = 0d;
 			var spacecraftCurrentOrbit = spacecraftInitialOrbit;
 			for (int i = 0; i < targets.Length; i++)
 			{
 				var target = targets[i];
-				var (drift, transfer, nextOrbit) = OptimizeForOne(elapsedTime,
-					spacecraftFinalMass, target, spacecraftCurrentOrbit);
+				target.Orbit = keplerianPropagation.PropagateState(target.Orbit, elapsedTime);
+				var (drift, transfer, nextOrbit) = OptimizeForOne(target, spacecraftCurrentOrbit);
                 
 				driftTimes[i] = drift;
 				transferTimes[i] = transfer;
@@ -62,19 +65,19 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 		}
 		
 		/// <summary>
-        /// Finds cost-optimal drift and transfer time for one target.
+        /// Finds cost-optimal drift and transfer time for one targetCurrentState.
         /// </summary>
         /// <param name="elapsedTime">How much time have passed before the spacecraft got to its current orbit (spacecraftCurrentOrbit)</param>
-        /// <param name="spacecraftFinalMass">How much the spacecraft should weight after servicing the target</param>
-        /// <param name="target"></param>
+        /// <param name="spacecraftFinalMass">How much the spacecraft should weight after servicing the targetCurrentState</param>
+        /// <param name="targetCurrentState"></param>
         /// <param name="spacecraftCurrentOrbit">Where is the spacecraft at the beginning of this transfer drift time</param>
         /// <returns>
-        /// driftTime - optimal drift time for given target,
-        /// transferTime - optimal transfer time for given target,
-        /// spacecraftFinalOrbit - where the spacecraft will be after servicing the given target
+        /// driftTime - optimal drift time for given targetCurrentState,
+        /// transferTime - optimal transfer time for given targetCurrentState,
+        /// spacecraftFinalOrbit - where the spacecraft will be after servicing the given targetCurrentState
         /// </returns>
-        private (double driftTime, double transferTime, Orbit spacecraftFinalOrbit) OptimizeForOne(double elapsedTime, double spacecraftFinalMass,
-            TargetParameters target, Orbit spacecraftCurrentOrbit)
+        private (double driftTime, double transferTime, Orbit spacecraftFinalOrbit) OptimizeForOne(
+            TargetParameters targetCurrentState, Orbit spacecraftCurrentOrbit)
 		{
 			var zeroPoint = new Vector(MinDriftTime, MinTransferTime);
 			var difference = new Vector((MaxDriftTime - MinDriftTime) / (PointsPerDimension - 1),
@@ -83,9 +86,10 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 				GdTolerance, GdIterationsLimit, Project, true, MajorCost, GdStepSize);
 			var min = gridDescentOptimizer.Minimize();
             var kinematic =
-                KinematicCalculator.CalculateKinematics(min[0], min[1], elapsedTime, target, spacecraftCurrentOrbit);
+                KinematicCalculator.CalculateKinematics(min[0], min[1], 0, targetCurrentState, spacecraftCurrentOrbit);
             var spacecraftFinalOrbit =
-                OrbitHelper.GetOrbit(kinematic.ServiceEndVelocity, kinematic.ServiceEndPosition, _mu);
+                OrbitHelper.GetOrbit(kinematic.ServiceEndVelocity, kinematic.ServiceEndPosition, Mu);
+            
             return (min[0], min[1], spacecraftFinalOrbit);
             
             double MajorCost(Vector times)
@@ -104,10 +108,8 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
                     invalidTimes += Math.Abs(transferTime - MinTransferTime);
                     transferTime = MinTransferTime;
                 }
-
-                var kinematics = KinematicCalculator.CalculateKinematics(driftTime, transferTime, elapsedTime, target,
-                    spacecraftCurrentOrbit);
-                var cost = CostCalculator.CalculateCost(new KinematicData[] { kinematics }, spacecraftFinalMass);
+                
+                var cost = CostCalculator.CalculateCost(new double[]{driftTime}, new double[]{transferTime}, new TargetParameters[]{targetCurrentState}, spacecraftCurrentOrbit);
                 return cost + invalidTimes * invalidTimes;
             }
 

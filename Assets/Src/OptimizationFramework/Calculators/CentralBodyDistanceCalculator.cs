@@ -5,7 +5,7 @@ namespace Src.OptimizationFramework.Calculators
 	/// <summary>
 	/// This class contains methods for calculating distances to the central body.
 	/// </summary>
-	public class CentralBodyDistanceCalculator
+	public static class CentralBodyDistanceCalculator
 	{
 		/// <summary>
 		/// Given start and end true anomaly values, and a 'shortPath' flag indicating the section,

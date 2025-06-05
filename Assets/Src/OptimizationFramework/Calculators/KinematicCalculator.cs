@@ -25,12 +25,18 @@ namespace Src.OptimizationFramework.Calculators
 			var kinematics = new KinematicData[targets.Length];
 			var spacecraftCurrentOrbit = startOrbit;
 			var elapsedTime = 0d;
+			var keplerianPropagation = new KeplerianPropagation()
+			{
+				CentralBodyPosition = new Vector(0, 0, 0),
+				GravitationalParameter = Mu
+			};
 			for (int i = 0; i < targets.Length; i++)
 			{
 				var target = targets[i];
 				var driftTime = driftTimes[i];
 				var transferTime = transferTimes[i];
-				var kinematicData = CalculateKinematics(driftTime, transferTime, elapsedTime,
+				target.Orbit = keplerianPropagation.PropagateState(target.Orbit, elapsedTime);
+				var kinematicData = CalculateKinematics(driftTime, transferTime,
 					target, spacecraftCurrentOrbit);
 				kinematics[i] = kinematicData;
 				spacecraftCurrentOrbit = OrbitHelper.GetOrbit(kinematicData.ServiceEndVelocity,
@@ -52,7 +58,7 @@ namespace Src.OptimizationFramework.Calculators
 		/// <param name="startOrbit"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
-		public KinematicData CalculateKinematics(double driftTime, double transferTime, double waitTime, TargetParameters target, Orbit startOrbit)
+		public KinematicData CalculateKinematics(double driftTime, double transferTime, TargetParameters target, Orbit startOrbit)
 		{
 			if (transferTime <= 0)
 			{
@@ -78,7 +84,7 @@ namespace Src.OptimizationFramework.Calculators
 			var (driftEndPos, driftEndVel) = OrbitHelper.GetPositionAndVelocity(driftEndOrbit, Mu);
 			//Where do we need to meet the target?
 			var rendezvousOrbit =
-				keplerianPropagation.PropagateState(target.Orbit, driftTime + transferTime + waitTime);
+				keplerianPropagation.PropagateState(target.Orbit, driftTime + transferTime);
 			var (rendezvousPos, rendezvousVel) = OrbitHelper.GetPositionAndVelocity(rendezvousOrbit, Mu);
 			//How to get from driftEndPos (transfer start position) to rendezvousPos in a given transfer time?
 			var (transferStartVel, transferEndVel) = FindCheapestTransfer(driftEndPos, driftEndVel, rendezvousPos, rendezvousVel, transferTime);

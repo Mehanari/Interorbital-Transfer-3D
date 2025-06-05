@@ -89,7 +89,7 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 				GdTolerance, GdIterationsLimit, Project, true, MajorCost, GdStepSize);
 			var min = gridDescentOptimizer.Minimize();
             var kinematic =
-                KinematicCalculator.CalculateKinematics(min[0], min[1], 0, targetCurrentState, spacecraftCurrentOrbit);
+                KinematicCalculator.CalculateKinematics(min[0], min[1], targetCurrentState, spacecraftCurrentOrbit);
             var spacecraftFinalOrbit =
                 OrbitHelper.GetOrbit(kinematic.ServiceEndVelocity, kinematic.ServiceEndPosition, Mu);
             

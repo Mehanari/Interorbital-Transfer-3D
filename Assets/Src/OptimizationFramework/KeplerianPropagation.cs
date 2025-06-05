@@ -1,5 +1,6 @@
 ﻿using System;
 using MehaMath.Math.Components;
+using Src.OptimizationFramework.DataModels;
 
 namespace Src.OptimizationFramework
 {

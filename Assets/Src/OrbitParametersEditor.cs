@@ -1,6 +1,7 @@
 ﻿using System;
 using Src.Model;
 using Src.OptimizationFramework;
+using Src.OptimizationFramework.DataModels;
 using UnityEngine;
 
 namespace Src

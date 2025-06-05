@@ -2,6 +2,7 @@
 using MehaMath.Math.Components;
 using Src.OptimizationFramework.Calculators;
 using Src.OptimizationFramework.Calculators.Cost;
+using Src.OptimizationFramework.DataModels;
 using Src.OptimizationFramework.MathComponents;
 
 namespace Src.OptimizationFramework.ScheduleOptimizers

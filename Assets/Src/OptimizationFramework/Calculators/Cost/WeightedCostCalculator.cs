@@ -2,6 +2,7 @@
 using System.Linq;
 using MehaMath.Math.Components;
 using Src.OptimizationFramework.Calculators.Fuel;
+using Src.OptimizationFramework.DataModels;
 
 namespace Src.OptimizationFramework.Calculators.Cost
 {

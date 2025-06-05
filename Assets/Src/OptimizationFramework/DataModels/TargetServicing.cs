@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Src.OptimizationFramework
+namespace Src.OptimizationFramework.DataModels
 {
 	/// <summary>
 	/// The purpose of this struct is provide all data necessary to examine a single target servicing process, regardless of other targets. 

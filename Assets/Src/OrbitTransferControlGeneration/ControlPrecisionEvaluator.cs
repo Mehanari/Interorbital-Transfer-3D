@@ -3,6 +3,7 @@ using MehaMath.Math.Components;
 using Src.Helpers;
 using Src.Model;
 using Src.OptimizationFramework;
+using Src.OptimizationFramework.DataModels;
 using Src.SpacecraftDynamics;
 
 namespace Src.OrbitTransferControlGeneration

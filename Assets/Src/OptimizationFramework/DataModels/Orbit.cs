@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Src.OptimizationFramework
+namespace Src.OptimizationFramework.DataModels
 {
 	[Serializable]
 	public struct Orbit

@@ -1,4 +1,5 @@
 ﻿using Src.OptimizationFramework.Calculators.Cost;
+using Src.OptimizationFramework.DataModels;
 
 namespace Src.OptimizationFramework.ScheduleOptimizers
 {

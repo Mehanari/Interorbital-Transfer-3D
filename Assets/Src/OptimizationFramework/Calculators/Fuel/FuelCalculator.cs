@@ -1,4 +1,6 @@
-﻿namespace Src.OptimizationFramework.Calculators.Fuel
+﻿using Src.OptimizationFramework.DataModels;
+
+namespace Src.OptimizationFramework.Calculators.Fuel
 {
 	public abstract class FuelCalculator
 	{

@@ -1,5 +1,6 @@
 ﻿using Src.Model;
 using Src.OptimizationFramework;
+using Src.OptimizationFramework.DataModels;
 
 namespace Src.OrbitTransferControlGeneration
 {

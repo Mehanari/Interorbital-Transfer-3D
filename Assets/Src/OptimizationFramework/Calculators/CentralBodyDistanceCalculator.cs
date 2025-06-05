@@ -1,4 +1,5 @@
 ﻿using System;
+using Src.OptimizationFramework.DataModels;
 
 namespace Src.OptimizationFramework.Calculators
 {

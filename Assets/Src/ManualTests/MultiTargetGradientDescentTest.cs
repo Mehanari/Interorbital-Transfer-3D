@@ -4,6 +4,7 @@ using Src.OptimizationFramework;
 using Src.OptimizationFramework.Calculators;
 using Src.OptimizationFramework.Calculators.Cost;
 using Src.OptimizationFramework.Calculators.Fuel;
+using Src.OptimizationFramework.DataModels;
 using Src.OptimizationFramework.MissionOptimization;
 using Src.OptimizationFramework.ScheduleOptimizers;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Src.ManualTests
 		private double _centralBodyRadius = 6600d;
 		private double _crushLambda = 10;
 		private double _fuelCost = 200000;
-		private double _timeCost = 100;
+		private double _timeCost = 0;
 		private double _fuelSurplus = 0.2;
 
 		private Orbit _spacecraftInitialOrbit = new Orbit()
@@ -100,7 +101,7 @@ namespace Src.ManualTests
 				ShipInitialOrbit = _spacecraftInitialOrbit,
 				Targets = GetTargets(),
 				StandGrav = _g0,
-				TimeCost = 0
+				TimeCost = _timeCost
 			};
 			jsonIo.Save(missionParameters);
 
@@ -152,7 +153,6 @@ namespace Src.ManualTests
 				MinTransferTime = 10000,
 				MaxTransferTime = 80000,
 				PointsPerDimension = 40,
-				CostToDifference = 1
 			};
 			return optimizer;
 		}

@@ -1,7 +1,7 @@
 ﻿using MehaMath.Math.Components;
 using Newtonsoft.Json;
 
-namespace Src.OptimizationFramework
+namespace Src.OptimizationFramework.DataModels
 {
 	public struct KinematicData
 	{

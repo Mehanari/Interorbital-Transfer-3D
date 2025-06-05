@@ -2,6 +2,7 @@
 using Src.OptimizationFramework.Calculators;
 using Src.OptimizationFramework.Calculators.Cost;
 using Src.OptimizationFramework.Calculators.Fuel;
+using Src.OptimizationFramework.DataModels;
 using Src.OptimizationFramework.MathComponents;
 using Src.OptimizationFramework.ScheduleOptimizers;
 

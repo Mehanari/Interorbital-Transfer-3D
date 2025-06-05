@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MehaMath.Math.Components;
 using Src.Model;
 using Src.OptimizationFramework;
+using Src.OptimizationFramework.DataModels;
 using UnityEngine;
 
 namespace Src.Visualisation

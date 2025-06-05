@@ -3,6 +3,7 @@ using MehaMath.Math.Components;
 using Src.Helpers;
 using Src.OptimizationFramework.Calculators;
 using Src.OptimizationFramework.Calculators.Cost;
+using Src.OptimizationFramework.DataModels;
 using Src.OptimizationFramework.MathComponents;
 
 namespace Src.OptimizationFramework.ScheduleOptimizers
@@ -30,7 +31,6 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 		public double MinDriftTime { get; set; }
 		public double MaxDriftTime { get; set; }
 		public int PointsPerDimension { get; set; }
-		public double CostToDifference { get; set; } = 0.99d;
 		
 		public KinematicCalculator KinematicCalculator { get; set; }
 
@@ -52,7 +52,10 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 			for (int i = 0; i < targets.Length; i++)
 			{
 				var target = targets[i];
-				target.Orbit = keplerianPropagation.PropagateState(target.Orbit, elapsedTime);
+				if (elapsedTime > 0d)
+				{
+					target.Orbit = keplerianPropagation.PropagateState(target.Orbit, elapsedTime);
+				}
 				var (drift, transfer, nextOrbit) = OptimizeForOne(target, spacecraftCurrentOrbit);
                 
 				driftTimes[i] = drift;
@@ -82,7 +85,7 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 			var zeroPoint = new Vector(MinDriftTime, MinTransferTime);
 			var difference = new Vector((MaxDriftTime - MinDriftTime) / (PointsPerDimension - 1),
 				(MaxTransferTime - MinTransferTime) / (PointsPerDimension - 1));
-			var gridDescentOptimizer = new GridDescent(zeroPoint, difference, PointsPerDimension, MinorCost,
+			var gridDescentOptimizer = new GridDescent(zeroPoint, difference, PointsPerDimension, MajorCost,
 				GdTolerance, GdIterationsLimit, Project, true, MajorCost, GdStepSize);
 			var min = gridDescentOptimizer.Minimize();
             var kinematic =
@@ -101,26 +104,16 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
                 if (driftTime < 0)
                 {
                     invalidTimes += driftTime;
-                    driftTime = 0d;
+                    times[0] = 0d;
                 }
                 if (transferTime < MinTransferTime)
                 {
                     invalidTimes += Math.Abs(transferTime - MinTransferTime);
-                    transferTime = MinTransferTime;
+                    times[1] = MinTransferTime;
                 }
                 
-                var cost = CostCalculator.CalculateCost(new double[]{driftTime}, new double[]{transferTime}, new TargetParameters[]{targetCurrentState}, spacecraftCurrentOrbit);
+                var cost = CostCalculator.CalculateCost(times, new TargetParameters[]{targetCurrentState}, spacecraftCurrentOrbit);
                 return cost + invalidTimes * invalidTimes;
-            }
-
-            double MinorCost(Vector times)
-            {
-	            var currentCost = MajorCost(times);
-	            var nextGuess = GradientDescent.Step(MajorCost, times, GdStepSize, projection: Project);
-	            var nextCost = MajorCost(nextGuess);
-	            //The less the change - the better
-	            var change = nextCost - currentCost;
-	            return currentCost * (CostToDifference) + change * (1 - CostToDifference);
             }
         }
 		

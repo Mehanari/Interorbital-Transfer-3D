@@ -2,6 +2,7 @@
 using MehaMath.Math.Components;
 using Src.Model;
 using Src.OptimizationFramework;
+using Src.OptimizationFramework.DataModels;
 
 namespace Src.Helpers
 {
@@ -86,11 +87,11 @@ namespace Src.Helpers
 				throw new ArgumentException("Gravitational parameter mu must be positive.");
 			var semiMajorAxis = SemiMajorAxis(position, velocity, mu);
 			var angularMomentum = Vector.CrossProduct3D(position, velocity);
-			if (Math.Abs(angularMomentum.MagnitudeSquare()) < Tolerance)
+			if (angularMomentum.MagnitudeSquare() < Tolerance)
 			{
 				throw new InvalidOperationException("Rectilinear orbit detected, cannot infer orbital parameters.");
 			}
-			var eccentricity = Eccentricity(position, velocity, angularMomentum, mu);
+			var eccentricity = Eccentricity(position, velocity, mu);
 			var inclination = Inclination(angularMomentum);
 			var nodeVector = NodeVector(angularMomentum);
 			var ascendingNodeLongitude = AscendingNodeLongitude(nodeVector);
@@ -117,8 +118,9 @@ namespace Src.Helpers
 			return mu * r / denom;
 		}
 
-		private static Vector Eccentricity(Vector position, Vector velocity, Vector angularMomentum, double mu)
+		private static Vector Eccentricity(Vector position, Vector velocity, double mu)
 		{
+			var angularMomentum = Vector.CrossProduct3D(position, velocity);
 			var e = (Vector.CrossProduct3D(velocity, angularMomentum) / mu) - position / position.Magnitude();
 			return e;
 		}

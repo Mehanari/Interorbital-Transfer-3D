@@ -1,4 +1,6 @@
-﻿namespace Src.OptimizationFramework.MissionOptimization
+﻿using Src.OptimizationFramework.DataModels;
+
+namespace Src.OptimizationFramework.MissionOptimization
 {
 	public interface IMissionOptimizer
 	{

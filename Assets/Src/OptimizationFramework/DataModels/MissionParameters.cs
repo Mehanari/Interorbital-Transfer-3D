@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Src.OptimizationFramework
+namespace Src.OptimizationFramework.DataModels
 {
 	public struct MissionParameters
 	{

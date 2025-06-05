@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="27.1.3">
+  <diagram name="Страница — 1" id="6t4UROWfjR3GSCYFDGit">
+    <mxGraphModel dx="1172" dy="1448" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;KinematicData&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ DriftTime: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TransferTime: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceTime: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ DriftStartPosition: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ DriftStartVelocity: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ DriftEndVelocity: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TransferStartPosition: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TransferStartVelocity: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TransferEndPosition: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TransferEndVelocity: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceStartVelocity: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceEndPosition: Vector&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceEndVelocity: Vector&lt;/p&gt; " style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="1219" y="-248" width="245" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;MissionParameters&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Targets: TargetParameters[]&lt;br&gt;+ CentralBodyRadius: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Mu: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Isp: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ FuelCost: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TimeCost: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ StandGrav: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ShipFinalMass: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ShipInitialOrbit: Orbit&lt;/p&gt; " style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="603" y="457" width="245" height="182" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;OptimizationResult&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceOrder: TargetParameters[]&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceData: TargetServicing[]&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TotalCost: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TotalTime: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TotalFuel: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Crushes: int&lt;/p&gt; " style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="593" y="-222" width="245" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Orbit&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ SemiMajorAxis: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Eccentricity: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Inclination: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ PerigeeArgument: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ AscendingNodeLongitude: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TrueAnomaly: double&lt;/p&gt; " style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="938" y="567" width="245" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;TargetParameters&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ TargetName: string&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Orbit: Orbit&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ServiceTime: double&lt;/p&gt; " style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="918" y="-97" width="245" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;TargetServicing&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ FuelMass: double&lt;/p&gt; &lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ Kinematics: KinematicData&lt;/p&gt; " style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="916" y="-270" width="245" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="rd59wRv0D7obe4C67Gmg-8" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;fontSize=12;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="5" target="3">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="957" y="450" as="sourcePoint" />
+            <mxPoint x="869" y="536" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rd59wRv0D7obe4C67Gmg-11" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;fontSize=12;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="7" target="4">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="639" y="-434" as="sourcePoint" />
+            <mxPoint x="799" y="-434" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rd59wRv0D7obe4C67Gmg-12" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;fontSize=12;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="6" target="4">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="910" y="-229" as="sourcePoint" />
+            <mxPoint x="848" y="-147" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rd59wRv0D7obe4C67Gmg-15" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="2" target="7">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1225" y="-429" as="sourcePoint" />
+            <mxPoint x="1385" y="-429" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

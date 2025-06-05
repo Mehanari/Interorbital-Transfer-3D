@@ -2,6 +2,7 @@
 using Src.Helpers;
 using Src.Model;
 using Src.OptimizationFramework;
+using Src.OptimizationFramework.DataModels;
 using Src.Visualisation;
 using UnityEngine;
 using UnityEngine.UI;

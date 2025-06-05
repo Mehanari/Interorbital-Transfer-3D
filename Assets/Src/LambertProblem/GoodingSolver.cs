@@ -91,7 +91,7 @@ namespace Src.LambertProblem
             var y1 = Math.Log(TimeOfFlight(x1, s_n, chord_n, lambda)) - Math.Log(time_n);
             var y2 = Math.Log(TimeOfFlight(x2, s_n, chord_n, lambda)) - Math.Log(time_n);
 
-            //Intermediate Value Theorem: if y1 and y2 have opposite signs, a root exists between x1 and x2.
+            //Intermediate Activation Theorem: if y1 and y2 have opposite signs, a root exists between x1 and x2.
             if (y1 * y2 > 0)
             {
                 //If this happened, then Halley's method may converge into an incorrect root.

@@ -3,7 +3,7 @@ using Src.OptimizationFramework.DataModels;
 
 namespace Src.OptimizationFramework.Calculators.Fuel
 {
-	public class SurplusFuelCalculator : FuelCalculator
+	public class SurplusFuelCalculator : IFuelCalculator
 	{
 		public double Isp { get; set; }
 		/// <summary>
@@ -20,7 +20,7 @@ namespace Src.OptimizationFramework.Calculators.Fuel
 		/// <param name="transfersKinematics">Must be in a chronological order</param>
 		/// <param name="spacecraftFinalMass">How much should spacecraft weight after all transfers</param>
 		/// <returns></returns>
-		public override double[] CalculateFuelMasses(KinematicData[] transfersKinematics)
+		public double[] CalculateFuelMasses(KinematicData[] transfersKinematics)
 		{
 			var fuelMasses = new double[transfersKinematics.Length];
 			var currentFinalMass = ShipFinalMass;

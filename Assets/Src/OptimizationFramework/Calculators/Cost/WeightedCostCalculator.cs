@@ -8,7 +8,7 @@ namespace Src.OptimizationFramework.Calculators.Cost
 {
 	public class WeightedCostCalculator : CostCalculator
 	{
-		public FuelCalculator FuelCalculator { get; set; }
+		public IFuelCalculator FuelCalculator { get; set; }
 		public KinematicCalculator KinematicCalculator { get; set; }
 		public IntersectionsCalculator IntersectionsCalculator { get; set; }
 		public double CrushPenaltyLambda { get; set; } = 100000;

@@ -2,8 +2,8 @@
 
 namespace Src.OptimizationFramework.Calculators.Fuel
 {
-	public abstract class FuelCalculator
+	public interface IFuelCalculator
 	{
-		public abstract double[] CalculateFuelMasses(KinematicData[] transfersKinematics);
+		public double[] CalculateFuelMasses(KinematicData[] transfersKinematics);
 	}
 }

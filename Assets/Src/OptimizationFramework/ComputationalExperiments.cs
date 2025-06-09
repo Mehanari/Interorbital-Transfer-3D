@@ -1,6 +1,5 @@
 ﻿using MehaMath.Math.Components.Json;
 using Newtonsoft.Json;
-using Src.OptimizationFramework;
 using Src.OptimizationFramework.Calculators;
 using Src.OptimizationFramework.Calculators.Cost;
 using Src.OptimizationFramework.Calculators.Fuel;
@@ -11,16 +10,16 @@ using UnityEngine;
 
 namespace Src.ManualTests
 {
-	public class MultiTargetGradientDescentTest : MonoBehaviour
+	public class ComputationalExperiments : MonoBehaviour
 	{
 		private double _g0 = 0.00981; //Standard gravitational acceleration in km/s^2.
-		private double _mDry = 100; //Mass of the spacecraft without fuel
+		private double _mDry = 500; //Mass of the spacecraft without fuel
 		private double _isp = 300; //Engine specific impulse
 		private double _mu = 398600.4418;
-		private double _centralBodyRadius = 6600d;
+		private double _centralBodyRadius = 6500d;
 		private double _crushLambda = 10;
-		private double _fuelCost = 200000;
-		private double _timeCost = 0;
+		private double _fuelCost = 10000;
+		private double _timeCost = 10;
 		private double _fuelSurplus = 0.2;
 
 		private Orbit _spacecraftInitialOrbit = new Orbit()
@@ -59,16 +58,16 @@ namespace Src.ManualTests
 				 Eccentricity = 0.0015,
 				 Inclination = 0.7505,
 				 PerigeeArgument = 0.3491,
-				 SemiMajorAxis = 7028,
+				 SemiMajorAxis = 7032,
 				 TrueAnomaly = 2.0944
 			 },
 		};
 
 		private double[] _targetsServiceTimes = new[]
 		{
-			1200d,
-			1200d,
-			1200d,
+			1800d,
+			3600d,
+			2700d,
 		};
 
 		private void Start()
@@ -83,7 +82,7 @@ namespace Src.ManualTests
 			var initialGuessOptimizer = InitializeGridDescentOptimizer();
 			var mainOptimizer = InitializeOptimizer();
 
-			var missionOptimizer = new TwoPhasedMissionOptimizer(initialGuessOptimizer, mainOptimizer, fuelCalculator,
+			var missionOptimizer = new SequentialMissionOptimizer(initialGuessOptimizer, fuelCalculator,
 				kinematicsCalculator, costCalculator);
 
 			var jsonIo = new JsonIO<MissionParameters>()

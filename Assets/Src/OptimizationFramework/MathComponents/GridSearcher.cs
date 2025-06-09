@@ -4,7 +4,7 @@ using MehaMath.Math.Components;
 
 namespace Src.OptimizationFramework.MathComponents
 {
-	public class GridSearcher
+	public static class GridSearcher
 	{
 		/// <summary>
 		/// Generates a grid in the n-dimensional space.

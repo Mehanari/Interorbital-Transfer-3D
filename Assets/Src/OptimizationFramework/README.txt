@@ -1,1 +1,0 @@
-﻿This is a folder with classes and scripts that will be exported as a library for multi-rendezvous space maneuvers optimization.

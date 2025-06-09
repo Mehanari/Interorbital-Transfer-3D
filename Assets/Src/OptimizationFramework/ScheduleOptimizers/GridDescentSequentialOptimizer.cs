@@ -85,8 +85,8 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 			var zeroPoint = new Vector(MinDriftTime, MinTransferTime);
 			var difference = new Vector((MaxDriftTime - MinDriftTime) / (PointsPerDimension - 1),
 				(MaxTransferTime - MinTransferTime) / (PointsPerDimension - 1));
-			var gridDescentOptimizer = new GridDescent(zeroPoint, difference, PointsPerDimension, MajorCost,
-				GdTolerance, GdIterationsLimit, Project, true, MajorCost, GdStepSize);
+			var gridDescentOptimizer = new GridDescent(zeroPoint, difference, PointsPerDimension, Objective,
+				GdTolerance, GdIterationsLimit, Project, true, Objective, GdStepSize);
 			var min = gridDescentOptimizer.Minimize();
             var kinematic =
                 KinematicCalculator.CalculateKinematics(min[0], min[1], targetCurrentState, spacecraftCurrentOrbit);
@@ -95,7 +95,7 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
             
             return (min[0], min[1], spacecraftFinalOrbit);
             
-            double MajorCost(Vector times)
+            double Objective(Vector times)
             {
                 var driftTime = times[0];
                 var transferTime = times[1];

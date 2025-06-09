@@ -6,7 +6,7 @@ using Src.OptimizationFramework.DataModels;
 
 namespace Src.OptimizationFramework.Calculators.Cost
 {
-	public class WeightedCostCalculator : CostCalculator
+	public class WeightedCostCalculator : ICostCalculator
 	{
 		public IFuelCalculator FuelCalculator { get; set; }
 		public KinematicCalculator KinematicCalculator { get; set; }
@@ -17,7 +17,7 @@ namespace Src.OptimizationFramework.Calculators.Cost
 		public double TimeCost { get; set; }
 		
 
-		public override double CalculateCost(double[] driftTimes, double[] transferTimes, TargetParameters[] targets, Orbit shipInitialOrbit)
+		public double CalculateCost(double[] driftTimes, double[] transferTimes, TargetParameters[] targets, Orbit shipInitialOrbit)
 		{
 			var transfersKinematics =
 				KinematicCalculator.CalculateKinematics(driftTimes, transferTimes, targets, shipInitialOrbit);
@@ -34,12 +34,12 @@ namespace Src.OptimizationFramework.Calculators.Cost
 			       Math.Pow(totalIntersection, CrushPenaltyPower) * CrushPenaltyLambda;
 		}
 
-		public override double CalculateCost((double[] driftTimes, double[] transferTimes) schedule, TargetParameters[] targets, Orbit shipInitialOrbit)
+		public double CalculateCost((double[] driftTimes, double[] transferTimes) schedule, TargetParameters[] targets, Orbit shipInitialOrbit)
 		{
 			return CalculateCost(schedule.driftTimes, schedule.transferTimes, targets, shipInitialOrbit);
 		}
 
-		public override double CalculateCost(Vector scheduleVector, TargetParameters[] targets, Orbit shipInitialOrbit)
+		public double CalculateCost(Vector scheduleVector, TargetParameters[] targets, Orbit shipInitialOrbit)
 		{
 			var schedule = ScheduleVectorUtils.FromVector(scheduleVector);
 			return CalculateCost(schedule, targets, shipInitialOrbit);

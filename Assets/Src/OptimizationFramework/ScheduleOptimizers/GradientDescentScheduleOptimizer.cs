@@ -9,6 +9,8 @@ namespace Src.OptimizationFramework.ScheduleOptimizers
 {
 	public class GradientDescentScheduleOptimizer : ScheduleOptimizer
 	{
+		public double MinTransferTime { get; set; } = 0.1d;
+		
 		/// <summary>
 		/// Step size of the gradient descent.
 		/// </summary>
